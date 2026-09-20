@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- FINFLOW SUPABASE AUTO-CONFIG
+     Replace the two placeholder values below with your Supabase Project URL
+     and Publishable/Anon Key. Do NOT put a service_role/secret key here.
+-->
+<script id="finflow-supabase-config">
+window.FINLOW_SUPABASE_CONFIG = {
+  url: "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE",
+  key: "PASTE_YOUR_SUPABASE_PUBLISHABLE_ANON_KEY_HERE"
+};
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>FinFlow Pro — Installment Manager</title>
+<style>
+:root{
+ --bg:#f4f7fb;--panel:#fff;--panel2:#f8fafc;--text:#172033;--muted:#6b7280;--line:#e5eaf2;
+ --primary:#2563eb;--primary2:#1d4ed8;--success:#16a34a;--warning:#d97706;--danger:#dc2626;
+ --shadow:0 12px 30px rgba(15,23,42,.08);--radius:18px
+}
+[data-theme="dark"]{
+ --bg:#0b1220;--panel:#111a2b;--panel2:#162237;--text:#edf3ff;--muted:#94a3b8;--line:#26344b;
+ --shadow:0 14px 35px rgba(0,0,0,.25)
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{width:260px;background:var(--panel);border-right:1px solid var(--line);padding:20px 14px;position:fixed;inset:0 auto 0 0;z-index:20;transition:.25s}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 10px 22px}
+.logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:grid;place-items:center;color:white;font-weight:800;font-size:20px}
+.brand strong{font-size:18px}.brand small{display:block;color:var(--muted);margin-top:2px}
+.nav{display:grid;gap:6px}
+.nav button{border:0;background:transparent;color:var(--muted);padding:12px 13px;border-radius:12px;text-align:left;display:flex;gap:11px;align-items:center;font-weight:650}
+.nav button:hover,.nav button.active{background:#eff6ff;color:var(--primary)}
+[data-theme="dark"] .nav button:hover,[data-theme="dark"] .nav button.active{background:#172b4d}
+.nav .ico{width:22px;text-align:center}
+.side-bottom{position:absolute;bottom:18px;left:14px;right:14px}
+.main{margin-left:260px;width:calc(100% - 260px);padding:24px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}
+.topbar h1{font-size:26px;margin:0 0 4px}.topbar p{margin:0;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 14px;border-radius:11px;font-weight:650}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn.primary:hover{background:var(--primary2)}
+.btn.success{background:var(--success);color:#fff;border-color:var(--success)}
+.btn.danger{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn.ghost{background:transparent}
+.menu-btn{display:none}
+.page{display:none}.page.active{display:block}
+.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stat{padding:18px;position:relative;overflow:hidden}.stat .label{color:var(--muted);font-size:13px;font-weight:700}.stat .value{font-size:26px;font-weight:800;margin-top:8px}.stat .icon{position:absolute;right:17px;top:17px;width:40px;height:40px;border-radius:12px;background:#eff6ff;color:var(--primary);display:grid;place-items:center}
+[data-theme="dark"] .stat .icon{background:#172b4d}
+.two{grid-template-columns:1.55fr 1fr}.three{grid-template-columns:repeat(3,1fr)}
+.section{padding:18px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}.section-head h2,.section-head h3{margin:0;font-size:17px}
+.table-wrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:700px}.table th,.table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.table th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}.table tr:hover td{background:var(--panel2)}
+.badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:750}.badge.green{background:#dcfce7;color:#166534}.badge.yellow{background:#fef3c7;color:#92400e}.badge.red{background:#fee2e2;color:#991b1b}.badge.blue{background:#dbeafe;color:#1e40af}
+[data-theme="dark"] .badge.green{background:#12351f;color:#86efac}[data-theme="dark"] .badge.yellow{background:#3b2b0b;color:#fcd34d}[data-theme="dark"] .badge.red{background:#3a1515;color:#fca5a5}[data-theme="dark"] .badge.blue{background:#122b4d;color:#93c5fd}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.form-grid.three-col{grid-template-columns:repeat(3,minmax(0,1fr))}
+.field label{display:block;font-size:12px;font-weight:750;color:var(--muted);margin:0 0 6px}.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel2);color:var(--text);outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary)}.field textarea{min-height:90px;resize:vertical}.format-hint{font-size:11px;color:var(--muted);margin-top:5px}.full{grid-column:1/-1}
+.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.search{padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel);color:var(--text);min-width:220px}
+.kpi{padding:16px}.kpi .big{font-size:25px;font-weight:800}.kpi p{color:var(--muted);font-size:12px;margin:5px 0 0}
+.progress{height:9px;background:var(--line);border-radius:20px;overflow:hidden;margin-top:10px}.progress span{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#7c3aed)}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.58);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal-backdrop.show{display:flex}.modal{width:min(760px,100%);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 25px 70px rgba(0,0,0,.25)}.modal-head{padding:17px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0}.modal-body{padding:20px}
+.close{border:0;background:transparent;color:var(--muted);font-size:22px}
+.toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#111827;color:white;padding:12px 16px;border-radius:12px;box-shadow:var(--shadow);display:none}.toast.show{display:block}
+.mobile-overlay{display:none}
+.note{padding:12px 14px;border-radius:12px;background:var(--panel2);color:var(--muted);font-size:13px}
+.list{display:grid;gap:10px}.list-item{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}.list-item:last-child{border-bottom:0}
+.amount{font-weight:800}.muted{color:var(--muted)}.danger-text{color:var(--danger)}.success-text{color:var(--success)}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.three{grid-template-columns:1fr}.form-grid.three-col{grid-template-columns:1fr}}
+@media(max-width:760px){
+ .sidebar{transform:translateX(-100%);box-shadow:var(--shadow)}.sidebar.open{transform:translateX(0)}.main{margin-left:0;width:100%;padding:15px}.menu-btn{display:inline-flex}.topbar h1{font-size:21px}.search{min-width:0;width:100%}.stats{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.mobile-overlay.show{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:15}.side-bottom{display:none}}
+@media(max-width:470px){.stats{grid-template-columns:1fr}.actions{width:100%}.actions .btn{flex:1}.topbar{align-items:flex-start}}
+@media print{.sidebar,.topbar,.no-print,.modal-backdrop{display:none!important}.main{margin:0;width:100%;padding:0}.page{display:none!important}.page.active{display:block!important}.card{box-shadow:none}}
+
+/* ===== Admin Login Lock ===== */
+body.login-locked{overflow:hidden}
+#adminLoginOverlay{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 20%,rgba(99,102,241,.24),transparent 35%),radial-gradient(circle at 80% 80%,rgba(14,165,233,.18),transparent 35%),rgba(2,6,23,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#adminLoginOverlay .admin-login-card{width:min(420px,100%);padding:30px;border:1px solid rgba(255,255,255,.14);border-radius:24px;background:rgba(15,23,42,.82);box-shadow:0 30px 90px rgba(0,0,0,.45);color:#fff}
+#adminLoginOverlay .admin-login-logo{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;margin:0 auto 16px;background:linear-gradient(135deg,#6366f1,#06b6d4);font-size:30px;font-weight:800}
+#adminLoginOverlay h2{text-align:center;margin:0 0 7px;font-size:25px}
+#adminLoginOverlay p{text-align:center;color:#cbd5e1;margin:0 0 22px}
+#adminLoginOverlay .login-field{margin:14px 0}
+#adminLoginOverlay label{display:block;font-size:13px;color:#cbd5e1;margin-bottom:7px}
+#adminLoginOverlay input{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:12px;border:1px solid rgba(148,163,184,.25);background:rgba(255,255,255,.07);color:#fff;outline:none}
+#adminLoginOverlay input:focus{border-color:#818cf8;box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+#adminLoginOverlay .admin-login-btn{width:100%;border:0;border-radius:12px;padding:13px 16px;margin-top:8px;cursor:pointer;color:#fff;font-weight:700;font-size:15px;background:linear-gradient(135deg,#6366f1,#06b6d4)}
+#adminLoginOverlay .admin-login-error{min-height:20px;margin:10px 0 0;text-align:center;color:#fca5a5;font-size:13px}
+@media(max-width:520px){#adminLoginOverlay .admin-login-card{padding:24px;border-radius:20px}}
+
+
+#page-admin-login.active{display:block}
+
+
+/* ===== Premium Admin Login Design ===== */
+#adminLoginOverlay{
+  background:
+    radial-gradient(circle at 12% 18%,rgba(99,102,241,.32),transparent 30%),
+    radial-gradient(circle at 88% 82%,rgba(6,182,212,.24),transparent 32%),
+    linear-gradient(135deg,#020617 0%,#0f172a 48%,#111827 100%);
+  overflow:hidden;
+}
+#adminLoginOverlay::before,#adminLoginOverlay::after{
+  content:"";position:absolute;border-radius:50%;pointer-events:none;filter:blur(2px);
+}
+#adminLoginOverlay::before{
+  width:360px;height:360px;top:-150px;right:-110px;
+  background:radial-gradient(circle,rgba(129,140,248,.22),transparent 68%);
+  animation:loginFloat 8s ease-in-out infinite;
+}
+#adminLoginOverlay::after{
+  width:300px;height:300px;bottom:-130px;left:-100px;
+  background:radial-gradient(circle,rgba(34,211,238,.16),transparent 68%);
+  animation:loginFloat 10s ease-in-out infinite reverse;
+}
+#adminLoginOverlay .admin-login-card{
+  position:relative;z-index:2;width:min(455px,100%);padding:34px;
+  border:1px solid rgba(255,255,255,.16);border-radius:30px;
+  background:linear-gradient(145deg,rgba(30,41,59,.88),rgba(15,23,42,.78));
+  box-shadow:0 35px 100px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  animation:loginCardIn .55s cubic-bezier(.2,.8,.2,1) both;
+}
+#adminLoginOverlay .admin-login-card::before{
+  content:"";position:absolute;inset:1px;border-radius:29px;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.08),transparent 35%,transparent 70%,rgba(99,102,241,.08));
+}
+#adminLoginOverlay .admin-login-logo{
+  position:relative;width:78px;height:78px;border-radius:24px;display:grid;place-items:center;
+  margin:0 auto 18px;font-size:34px;
+  background:linear-gradient(135deg,#6366f1,#06b6d4);
+  box-shadow:0 15px 35px rgba(79,70,229,.42),inset 0 1px 1px rgba(255,255,255,.35);
+  animation:logoPulse 3s ease-in-out infinite;
+}
+#adminLoginOverlay .admin-login-logo::after{
+  content:"";position:absolute;inset:-6px;border-radius:29px;
+  border:1px solid rgba(129,140,248,.25);animation:logoRing 2.5s ease-out infinite;
+}
+#adminLoginOverlay h2{
+  position:relative;text-align:center;margin:0;font-size:29px;letter-spacing:-.6px;
+  color:#fff;font-weight:800;
+}
+#adminLoginOverlay p{
+  position:relative;text-align:center;color:#94a3b8;margin:8px 0 26px;font-size:14px;
+}
+#adminLoginOverlay .login-field{position:relative;margin:17px 0}
+#adminLoginOverlay label{
+  display:block;font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+  color:#cbd5e1;margin-bottom:8px;
+}
+#adminLoginOverlay input{
+  width:100%;box-sizing:border-box;padding:14px 15px;border-radius:14px;
+  border:1px solid rgba(148,163,184,.20);background:rgba(2,6,23,.38);
+  color:#fff;outline:none;font-size:15px;transition:.25s ease;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.03);
+}
+#adminLoginOverlay input::placeholder{color:#64748b}
+#adminLoginOverlay input:focus{
+  border-color:rgba(129,140,248,.85);background:rgba(2,6,23,.52);
+  box-shadow:0 0 0 4px rgba(99,102,241,.13),0 8px 25px rgba(0,0,0,.15);
+  transform:translateY(-1px);
+}
+#adminLoginOverlay .admin-login-btn{
+  position:relative;width:100%;border:0;border-radius:14px;padding:14px 18px;
+  margin-top:10px;cursor:pointer;color:#fff;font-weight:800;font-size:15px;
+  letter-spacing:.2px;background:linear-gradient(135deg,#6366f1 0%,#4f46e5 48%,#06b6d4 100%);
+  box-shadow:0 12px 28px rgba(79,70,229,.30);transition:.25s ease;overflow:hidden;
+}
+#adminLoginOverlay .admin-login-btn::before{
+  content:"";position:absolute;top:0;left:-120%;width:80%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  transform:skewX(-20deg);animation:loginShine 3.5s infinite;
+}
+#adminLoginOverlay .admin-login-btn:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(79,70,229,.42);filter:brightness(1.06)}
+#adminLoginOverlay .admin-login-btn:active{transform:translateY(0)}
+#adminLoginOverlay .admin-login-error{
+  min-height:20px;margin:10px 0 0;text-align:center;color:#fda4af;font-size:13px;
+}
+#adminLoginOverlay .login-security{
+  position:relative;display:flex;align-items:center;justify-content:center;gap:7px;
+  margin-top:20px;color:#64748b;font-size:11px;
+}
+#adminLoginOverlay .login-security span:first-child{color:#34d399;font-size:13px}
+@keyframes loginCardIn{from{opacity:0;transform:translateY(25px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes logoPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes logoRing{0%{opacity:.7;transform:scale(.92)}100%{opacity:0;transform:scale(1.18)}}
+@keyframes loginFloat{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,18px,0)}}
+@keyframes loginShine{0%{left:-120%}35%,100%{left:150%}}
+@media(max-width:520px){
+  #adminLoginOverlay{padding:15px}
+  #adminLoginOverlay .admin-login-card{padding:27px 21px;border-radius:24px}
+  #adminLoginOverlay h2{font-size:25px}
+}
+@media(prefers-reduced-motion:reduce){
+  #adminLoginOverlay .admin-login-card,#adminLoginOverlay .admin-login-logo,
+  #adminLoginOverlay::before,#adminLoginOverlay::after,#adminLoginOverlay .admin-login-logo::after,
+  #adminLoginOverlay .admin-login-btn::before{animation:none!important}
+}
+
+
+/* ===== FinFlow Pro Admin Settings — Premium UI ===== */
+.finflow-admin-settings-page{max-width:1100px;margin:0 auto;padding-bottom:35px}
+.admin-settings-hero{
+  position:relative;display:flex;align-items:center;gap:18px;padding:26px 28px;margin-bottom:18px;
+  border-radius:24px;overflow:hidden;
+  background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(99,102,241,.08),rgba(6,182,212,.10));
+  border:1px solid rgba(59,130,246,.18);box-shadow:0 14px 40px rgba(15,23,42,.08);
+}
+.admin-settings-hero:after{content:"";position:absolute;width:220px;height:220px;right:-80px;top:-110px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.20),transparent 68%);pointer-events:none}
+.admin-hero-icon{position:relative;z-index:1;width:72px;height:72px;display:grid;place-items:center;border-radius:22px;font-size:35px;background:linear-gradient(135deg,#2563eb,#7c3aed);box-shadow:0 14px 30px rgba(37,99,235,.28)}
+.admin-hero-copy{position:relative;z-index:1;flex:1}
+.admin-eyebrow{font-size:10px;letter-spacing:2px;font-weight:800;color:#2563eb;margin-bottom:4px}
+.admin-settings-hero h2{margin:0;font-size:30px;line-height:1.15}
+.admin-settings-hero p{margin:7px 0 0;color:var(--muted,#64748b);font-size:14px}
+.admin-access-badge{position:relative;z-index:1;padding:10px 14px;border-radius:999px;font-size:12px;font-weight:800;color:#059669;background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.20);white-space:nowrap}
+.admin-access-badge span{font-size:9px;margin-right:5px}
+
+.admin-security-note,.admin-important{
+  display:flex;gap:15px;align-items:flex-start;padding:19px 21px;border-radius:19px;margin-bottom:18px;
+  background:linear-gradient(135deg,rgba(59,130,246,.10),rgba(14,165,233,.05));
+  border:1px solid rgba(59,130,246,.14);
+}
+.note-icon,.important-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:13px;color:white;font-weight:900;background:linear-gradient(135deg,#2563eb,#06b6d4);box-shadow:0 8px 20px rgba(37,99,235,.22)}
+.admin-security-note strong,.admin-important strong{display:block;color:#2563eb;font-size:15px;margin-bottom:4px}
+.admin-security-note p,.admin-important p{margin:0;color:var(--muted,#64748b);font-size:13px;line-height:1.55}
+
+.admin-account-card{
+  padding:25px;border-radius:24px;background:var(--card,#fff);border:1px solid rgba(148,163,184,.20);
+  box-shadow:0 18px 55px rgba(15,23,42,.09);margin-bottom:18px;
+}
+.account-card-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:22px}
+.account-title-wrap{display:flex;align-items:center;gap:13px}
+.account-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;color:#fff;font-size:22px;background:linear-gradient(135deg,#2563eb,#4f46e5)}
+.account-card-head h3{margin:0;font-size:21px}
+.account-card-head p{margin:4px 0 0;color:var(--muted,#64748b);font-size:12px}
+.secure-pill{padding:9px 13px;border-radius:999px;background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.18);color:#059669;font-size:11px;font-weight:800;white-space:nowrap}
+
+.admin-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.admin-field.full{grid-column:1/-1}
+.admin-field label{display:block;font-size:13px;font-weight:800;margin-bottom:7px}
+.admin-field small{display:block;color:var(--muted,#64748b);font-size:11px;margin-top:6px}
+.admin-input-wrap{position:relative;display:flex;align-items:center}
+.admin-input-wrap .field-icon{position:absolute;left:14px;z-index:2;font-size:16px}
+.admin-input-wrap .field-icon.confirm{font-size:15px}
+.admin-input-wrap input{width:100%;box-sizing:border-box;padding:13px 43px 13px 43px;border-radius:13px;border:1px solid rgba(148,163,184,.30);background:var(--input-bg,#f8fafc);color:var(--text,#0f172a);outline:none;transition:.2s;font-size:14px}
+.admin-input-wrap input:focus{border-color:#6366f1;box-shadow:0 0 0 4px rgba(99,102,241,.11)}
+.password-eye{position:absolute;right:8px;width:34px;height:34px;border:0;border-radius:9px;background:transparent;color:var(--muted,#64748b);cursor:pointer}
+.password-eye:hover{background:rgba(99,102,241,.10);color:#4f46e5}
+
+.password-tips{display:flex;gap:13px;padding:16px 17px;margin-top:20px;border-radius:16px;background:linear-gradient(135deg,rgba(59,130,246,.09),rgba(99,102,241,.06));border:1px solid rgba(59,130,246,.12)}
+.tips-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;background:#e0edff;color:#2563eb;font-size:18px}
+.password-tips strong{color:#2563eb;font-size:14px}
+.password-tips ul{margin:6px 0 0;padding-left:17px;color:var(--muted,#64748b);font-size:12px;line-height:1.7}
+
+.admin-action-grid{display:grid;grid-template-columns:1.35fr .85fr;gap:13px;margin-top:20px}
+.admin-save-btn,.admin-lock-btn{border-radius:15px;padding:13px 17px;cursor:pointer;display:grid;grid-template-columns:auto 1fr;column-gap:9px;align-items:center;text-align:left;transition:.2s}
+.admin-save-btn span,.admin-lock-btn span{grid-row:1/3;font-size:21px;align-self:center}
+.admin-save-btn b,.admin-lock-btn b{font-size:14px}
+.admin-save-btn small,.admin-lock-btn small{font-size:10px;margin-top:2px}
+.admin-save-btn{border:0;color:white;background:linear-gradient(135deg,#2563eb,#4f46e5,#7c3aed);box-shadow:0 10px 25px rgba(79,70,229,.25)}
+.admin-save-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(79,70,229,.33)}
+.admin-lock-btn{border:1px solid rgba(239,68,68,.25);color:#dc2626;background:rgba(239,68,68,.04)}
+.admin-lock-btn:hover{transform:translateY(-2px);background:rgba(239,68,68,.08)}
+.admin-settings-status{min-height:18px;text-align:center;color:#059669;font-size:12px;margin-top:10px}
+
+.admin-important{margin-bottom:0;background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(6,182,212,.05));border-color:rgba(16,185,129,.15)}
+.admin-important strong{color:#059669}
+.admin-important .important-icon{background:linear-gradient(135deg,#059669,#10b981)}
+
+body.dark .admin-settings-hero,
+.dark .admin-settings-hero{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(99,102,241,.10),rgba(6,182,212,.07));border-color:rgba(96,165,250,.20)}
+body.dark .admin-account-card,.dark .admin-account-card{background:rgba(15,23,42,.78);border-color:rgba(148,163,184,.17);box-shadow:0 18px 55px rgba(0,0,0,.30)}
+body.dark .admin-input-wrap input,.dark .admin-input-wrap input{background:rgba(2,6,23,.48);color:#e2e8f0;border-color:rgba(148,163,184,.24)}
+body.dark .admin-input-wrap input:focus,.dark .admin-input-wrap input:focus{border-color:#818cf8;box-shadow:0 0 0 4px rgba(99,102,241,.14)}
+body.dark .admin-settings-hero h2,.dark .admin-settings-hero h2,
+body.dark .account-card-head h3,.dark .account-card-head h3,
+body.dark .admin-field label,.dark .admin-field label{color:#f1f5f9}
+body.dark .admin-security-note p,body.dark .admin-important p,.dark .admin-security-note p,.dark .admin-important p,
+body.dark .account-card-head p,.dark .account-card-head p,
+body.dark .admin-field small,.dark .admin-field small,
+body.dark .password-tips li,.dark .password-tips li{color:#94a3b8}
+body.dark .password-tips,.dark .password-tips{background:rgba(37,99,235,.09);border-color:rgba(96,165,250,.18)}
+body.dark .tips-icon,.dark .tips-icon{background:rgba(59,130,246,.16)}
+body.dark .admin-security-note,body.dark .admin-important,.dark .admin-security-note,.dark .admin-important{background:rgba(37,99,235,.08);border-color:rgba(96,165,250,.16)}
+body.dark .admin-settings-hero p,.dark .admin-settings-hero p{color:#94a3b8}
+
+@media(max-width:760px){
+  .finflow-admin-settings-page{padding:0 2px 28px}
+  .admin-settings-hero{padding:20px;align-items:flex-start}
+  .admin-hero-icon{width:58px;height:58px;font-size:27px;border-radius:18px}
+  .admin-settings-hero h2{font-size:23px}
+  .admin-access-badge{display:none}
+  .admin-form-grid,.admin-action-grid{grid-template-columns:1fr}
+  .admin-field.full{grid-column:auto}
+}
+@media(max-width:480px){
+  .admin-settings-hero{gap:12px;padding:17px;border-radius:19px}
+  .admin-hero-icon{width:50px;height:50px;font-size:23px}
+  .admin-eyebrow{font-size:8px}
+  .admin-settings-hero h2{font-size:19px}
+  .admin-settings-hero p{font-size:12px}
+  .admin-account-card{padding:18px;border-radius:20px}
+  .account-card-head{align-items:flex-start}
+  .secure-pill{display:none}
+}
+
+
+/* ===== Admin Recovery + Professional Dark Mode ===== */
+.default-login-hint{text-align:center;margin-top:12px;color:#64748b;font-size:10px;line-height:1.5}.default-login-hint b{color:#94a3b8}.login-recovery-row{text-align:center;margin-top:14px}
+.login-recovery-link{border:0;background:none;color:#93c5fd;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none}
+.login-recovery-link:hover{text-decoration:underline;color:#bfdbfe}
+
+.admin-recovery-modal{position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(2,6,23,.78);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px)}
+.admin-recovery-card{position:relative;width:min(450px,100%);max-height:92vh;overflow:auto;padding:29px;border-radius:28px;color:#e2e8f0;background:linear-gradient(145deg,#0f172a,#111827 58%,#172554);border:1px solid rgba(148,163,184,.20);box-shadow:0 35px 100px rgba(0,0,0,.60)}
+.recovery-close{position:absolute;right:15px;top:13px;width:35px;height:35px;border:0;border-radius:10px;background:rgba(255,255,255,.06);color:#94a3b8;font-size:23px;cursor:pointer}
+.recovery-close:hover{background:rgba(239,68,68,.13);color:#fca5a5}
+.recovery-icon{width:60px;height:60px;display:grid;place-items:center;border-radius:19px;background:linear-gradient(135deg,#4f46e5,#06b6d4);font-size:27px;box-shadow:0 12px 30px rgba(79,70,229,.32);margin-bottom:15px}
+.recovery-eyebrow{font-size:9px;letter-spacing:2px;font-weight:900;color:#67e8f9}
+.admin-recovery-card h3{margin:5px 0;font-size:24px;color:#fff}
+.admin-recovery-card>p{margin:0 0 21px;color:#94a3b8;font-size:13px;line-height:1.5}
+.recovery-step{margin:13px 0}
+.recovery-step label{display:block;margin-bottom:7px;color:#cbd5e1;font-size:12px;font-weight:800}
+.recovery-step input{width:100%;box-sizing:border-box;padding:13px 14px;border-radius:12px;border:1px solid rgba(148,163,184,.22);background:rgba(2,6,23,.45);color:#fff;outline:none}
+.recovery-step input:focus{border-color:#818cf8;box-shadow:0 0 0 4px rgba(99,102,241,.13)}
+.recovery-submit{width:100%;margin-top:8px;padding:13px;border:0;border-radius:13px;color:#fff;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#4f46e5,#06b6d4);box-shadow:0 12px 26px rgba(79,70,229,.25)}
+.recovery-error{min-height:19px;text-align:center;color:#fda4af;font-size:12px;margin-top:9px}
+.recovery-help{text-align:center;color:#64748b;font-size:10px;margin-top:13px;line-height:1.5}
+
+.admin-recovery-settings-card{margin-bottom:18px;padding:22px;border-radius:23px;border:1px solid rgba(148,163,184,.17);background:linear-gradient(145deg,rgba(37,99,235,.08),rgba(99,102,241,.04));box-shadow:0 15px 45px rgba(15,23,42,.07)}
+.recovery-settings-head{display:flex;gap:13px;align-items:center}
+.recovery-settings-icon{width:47px;height:47px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#4f46e5,#06b6d4);font-size:21px;color:#fff}
+.recovery-settings-head h3{margin:0;font-size:18px}
+.recovery-settings-head p{margin:4px 0 0;color:var(--muted,#64748b);font-size:12px;line-height:1.45}
+.recovery-code-box{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:17px;padding:15px 16px;border-radius:15px;background:var(--input-bg,#f8fafc);border:1px dashed rgba(99,102,241,.32)}
+.recovery-code-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#64748b;font-weight:800;margin-bottom:5px}
+.recovery-code-box strong{font-size:19px;letter-spacing:2px;color:#4f46e5}
+.recovery-code-box button{border:0;border-radius:10px;padding:9px 12px;background:#4f46e5;color:#fff;font-size:11px;font-weight:800;cursor:pointer}
+.recovery-warning{margin-top:10px;color:#b45309;font-size:11px;line-height:1.5}
+
+body.dark .admin-recovery-settings-card,.dark .admin-recovery-settings-card{background:linear-gradient(145deg,rgba(30,64,175,.16),rgba(76,29,149,.10));border-color:rgba(129,140,248,.17);box-shadow:0 18px 55px rgba(0,0,0,.28)}
+body.dark .recovery-settings-head h3,.dark .recovery-settings-head h3{color:#f8fafc}
+body.dark .recovery-settings-head p,.dark .recovery-settings-head p{color:#94a3b8}
+body.dark .recovery-code-box,.dark .recovery-code-box{background:rgba(2,6,23,.45);border-color:rgba(129,140,248,.25)}
+body.dark .recovery-code-label,.dark .recovery-code-label{color:#64748b}
+body.dark .recovery-code-box strong,.dark .recovery-code-box strong{color:#a5b4fc}
+body.dark .recovery-warning,.dark .recovery-warning{color:#fbbf24}
+
+@media(max-width:560px){
+  .admin-recovery-card{padding:23px;border-radius:22px}
+  .recovery-code-box{align-items:flex-start;flex-direction:column}
+  .recovery-code-box button{width:100%}
+}
+
+
+.recovery-reset-btn{width:100%;margin-top:9px;padding:11px;border:1px solid rgba(248,113,113,.28);border-radius:12px;color:#fca5a5;background:rgba(239,68,68,.07);font-size:12px;font-weight:800;cursor:pointer}
+.recovery-reset-btn:hover{background:rgba(239,68,68,.14);border-color:rgba(248,113,113,.45)}
+.reset-confirm-box{position:fixed;inset:0;z-index:100003;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(2,6,23,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.reset-confirm-card{width:min(390px,100%);padding:25px;border-radius:23px;background:#0f172a;color:#e2e8f0;border:1px solid rgba(148,163,184,.2);box-shadow:0 30px 90px rgba(0,0,0,.6);text-align:center}
+.reset-confirm-card .rc-icon{font-size:35px;margin-bottom:9px}
+.reset-confirm-card h3{margin:0 0 7px;color:#fff}
+.reset-confirm-card p{font-size:12px;color:#94a3b8;line-height:1.55}
+.reset-confirm-actions{display:flex;gap:9px;margin-top:18px}
+.reset-confirm-actions button{flex:1;padding:11px;border-radius:11px;cursor:pointer;font-weight:800}
+.rc-cancel{border:1px solid rgba(148,163,184,.2);background:rgba(255,255,255,.05);color:#cbd5e1}
+.rc-confirm{border:0;background:linear-gradient(135deg,#dc2626,#f97316);color:#fff}
+
+
+.login-emergency-row{text-align:center;margin-top:9px}
+.login-emergency-row button{border:0;background:none;color:#fda4af;font-size:11px;font-weight:700;cursor:pointer}
+.login-emergency-row button:hover{color:#fecdd3;text-decoration:underline}
+
+
+
+
+/* ===== Admin Settings Fullscreen Navigation ===== */
+body.admin-settings-mode .sidebar{
+  display:none !important;
+}
+body.admin-settings-mode .main{
+  margin-left:0 !important;
+  width:100% !important;
+  padding:28px;
+}
+body.admin-settings-mode .menu-btn{
+  display:inline-flex !important;
+}
+body.admin-settings-mode .sidebar.open{
+  display:block !important;
+  transform:translateX(0);
+}
+body.admin-settings-mode .mobile-overlay.show{
+  display:block;
+}
+@media(max-width:760px){
+  body.admin-settings-mode .main{padding:15px}
+  body.admin-settings-mode .sidebar{display:block !important;transform:translateX(-110%) !important;visibility:hidden !important;pointer-events:none !important;}
+  body.admin-settings-mode .sidebar.open{display:block !important;transform:translateX(0)}
+}
+
+
+/* Professional Cloud Local message modal */
+.finflow-message-modal{
+  position:fixed; inset:0; z-index:99999;
+  display:flex; align-items:center; justify-content:center;
+  padding:20px;
+  background:rgba(7,12,24,.62);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .22s ease, visibility .22s ease;
+}
+.finflow-message-modal.show{
+  opacity:1; visibility:visible; pointer-events:auto;
+}
+.finflow-message-card{
+  width:min(460px,100%);
+  border:1px solid rgba(99,102,241,.22);
+  border-radius:22px;
+  background:var(--panel,#fff);
+  color:var(--text,#172033);
+  box-shadow:0 24px 70px rgba(0,0,0,.28);
+  overflow:hidden;
+  transform:translateY(14px) scale(.97);
+  transition:transform .25s ease;
+}
+.finflow-message-modal.show .finflow-message-card{
+  transform:translateY(0) scale(1);
+}
+.finflow-message-head{
+  display:flex; align-items:center; gap:14px;
+  padding:20px 22px 14px;
+}
+.finflow-message-icon{
+  width:46px;height:46px;border-radius:14px;
+  display:grid;place-items:center;
+  font-size:21px;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+  color:#fff;
+  box-shadow:0 10px 25px rgba(37,99,235,.25);
+}
+.finflow-message-title{font-size:18px;font-weight:800;letter-spacing:-.2px}
+.finflow-message-subtitle{font-size:12px;color:var(--muted,#64748b);margin-top:3px}
+.finflow-message-body{padding:8px 22px 20px;line-height:1.65;font-size:14px}
+.finflow-message-actions{
+  display:flex;justify-content:flex-end;gap:10px;
+  padding:14px 22px 20px;
+  border-top:1px solid var(--line,#e5e7eb);
+}
+.finflow-message-btn{
+  border:0;border-radius:12px;padding:11px 18px;
+  font-weight:700;cursor:pointer;
+  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  color:#fff;box-shadow:0 8px 18px rgba(37,99,235,.2);
+}
+.finflow-message-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+[data-theme="dark"] .finflow-message-card{
+  background:#111a2b;color:#edf3ff;border-color:#26344b;
+  box-shadow:0 28px 80px rgba(0,0,0,.55);
+}
+[data-theme="dark"] .finflow-message-actions{border-top-color:#26344b}
+@media(max-width:520px){
+  .finflow-message-modal{padding:14px}
+  .finflow-message-card{border-radius:18px}
+}
+
+
+/* Professional confirmation dialog for Cloud Local */
+.finflow-confirm-modal{
+  position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;
+  padding:18px;background:rgba(4,10,18,.66);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease;
+}
+.finflow-confirm-modal.show{opacity:1;visibility:visible;pointer-events:auto}
+.finflow-confirm-card{
+  width:min(440px,100%);background:var(--panel,#fff);color:var(--text,#172033);
+  border:1px solid var(--line,#e5e7eb);border-radius:22px;overflow:hidden;
+  box-shadow:0 28px 80px rgba(0,0,0,.35);transform:translateY(12px) scale(.97);
+  transition:transform .22s ease;
+}
+.finflow-confirm-modal.show .finflow-confirm-card{transform:none}
+.finflow-confirm-top{padding:22px 22px 8px;display:flex;gap:14px;align-items:center}
+.finflow-confirm-icon{
+  width:48px;height:48px;border-radius:15px;display:grid;place-items:center;flex:none;
+  background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;font-size:22px;
+  box-shadow:0 10px 24px rgba(37,99,235,.25)
+}
+.finflow-confirm-title{font-size:18px;font-weight:800}
+.finflow-confirm-label{font-size:12px;color:var(--muted,#64748b);margin-top:3px}
+.finflow-confirm-body{padding:12px 22px 22px;font-size:14px;line-height:1.65}
+.finflow-confirm-actions{
+  padding:14px 22px 20px;border-top:1px solid var(--line,#e5e7eb);
+  display:flex;justify-content:flex-end;gap:10px
+}
+.finflow-confirm-btn{
+  min-width:96px;padding:11px 18px;border-radius:12px;border:1px solid var(--line,#dbe2ea);
+  background:var(--panel2,#f5f7fb);color:var(--text,#172033);font-weight:750;cursor:pointer
+}
+.finflow-confirm-btn.primary{
+  border:0;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;
+  box-shadow:0 8px 18px rgba(37,99,235,.2)
+}
+.finflow-confirm-btn:hover{transform:translateY(-1px)}
+[data-theme="dark"] .finflow-confirm-card{background:#111a2b;color:#edf3ff;border-color:#26344b}
+[data-theme="dark"] .finflow-confirm-actions{border-color:#26344b}
+[data-theme="dark"] .finflow-confirm-btn{background:#162237;color:#edf3ff;border-color:#26344b}
+
+
+/* Premium customer selector */
+.customer-select-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--line,#dbe2ea);border-radius:14px;background:var(--panel2,#f7f9fc);color:var(--text,#172033);cursor:pointer;text-align:left;transition:.2s}
+.customer-select-trigger:hover,.customer-select-trigger:focus{border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.12);outline:none}
+.customer-trigger-main{display:flex;align-items:center;gap:12px;min-width:0}.customer-trigger-avatar{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;font-weight:800;flex:none}.customer-trigger-text{min-width:0}.customer-trigger-name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.customer-trigger-product{font-size:12px;color:var(--muted,#64748b);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.customer-chevron{font-size:18px;color:var(--muted,#64748b);flex:none}
+.customer-picker{position:fixed;inset:0;z-index:100001;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(4,10,18,.68);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);opacity:0;visibility:hidden;pointer-events:none;transition:.2s}.customer-picker.show{opacity:1;visibility:visible;pointer-events:auto}
+.customer-picker-card{width:min(620px,100%);max-height:min(86vh,760px);display:flex;flex-direction:column;background:var(--panel,#fff);color:var(--text,#172033);border:1px solid var(--line,#e5e7eb);border-radius:24px;overflow:hidden;box-shadow:0 30px 90px rgba(0,0,0,.38);transform:translateY(14px) scale(.97);transition:.22s}.customer-picker.show .customer-picker-card{transform:none}
+.customer-picker-head{padding:20px 20px 14px;display:flex;align-items:center;gap:13px}.customer-picker-icon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;font-size:21px;box-shadow:0 10px 25px rgba(37,99,235,.24)}.customer-picker-title{font-size:19px;font-weight:850}.customer-picker-subtitle{font-size:12px;color:var(--muted,#64748b);margin-top:3px}.customer-picker-close{margin-left:auto;width:42px;height:42px;border:0;border-radius:13px;background:var(--panel2,#f3f6fa);color:var(--muted,#64748b);font-size:24px;cursor:pointer}.customer-picker-search{margin:0 20px 14px;position:relative}.customer-picker-search input{width:100%;box-sizing:border-box;padding:13px 15px 13px 44px;border:1px solid var(--line,#dbe2ea);border-radius:14px;background:var(--panel2,#f7f9fc);color:var(--text,#172033);font-size:14px;outline:none}.customer-picker-search input:focus{border-color:#3b82f6;box-shadow:0 0 0 4px rgba(59,130,246,.12)}.customer-picker-search span{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:19px;color:var(--muted,#64748b)}
+.customer-picker-list{padding:0 20px 8px;overflow:auto}.customer-option{display:flex;align-items:center;gap:13px;padding:13px 12px;margin:6px 0;border:1px solid var(--line,#e5e7eb);border-radius:16px;background:transparent;color:inherit;cursor:pointer;text-align:left;width:100%;transition:.18s}.customer-option:hover{border-color:#60a5fa;background:rgba(59,130,246,.07);transform:translateY(-1px)}.customer-option.selected{border-color:#3b82f6;background:rgba(37,99,235,.09);box-shadow:0 0 0 2px rgba(59,130,246,.1)}.customer-option-avatar{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}.customer-option-info{min-width:0;flex:1}.customer-option-name{font-weight:800;font-size:14px}.customer-option-product{font-size:12px;color:var(--muted,#64748b);margin-top:3px}.customer-radio{width:21px;height:21px;border-radius:50%;border:2px solid #94a3b8;display:grid;place-items:center;flex:none}.customer-option.selected .customer-radio{border-color:#38bdf8}.customer-option.selected .customer-radio:after{content:'';width:9px;height:9px;border-radius:50%;background:#38bdf8;box-shadow:0 0 8px rgba(56,189,248,.6)}.customer-picker-footer{padding:12px 20px 18px;border-top:1px solid var(--line,#e5e7eb);display:flex;align-items:center;justify-content:space-between;gap:10px}.customer-picker-count{font-size:12px;color:var(--muted,#64748b)}.customer-picker-cancel{border:1px solid var(--line,#dbe2ea);background:var(--panel2,#f5f7fb);color:var(--text,#172033);border-radius:12px;padding:10px 17px;font-weight:750;cursor:pointer}.customer-picker-choose{border:0;background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;border-radius:12px;padding:10px 18px;font-weight:800;cursor:pointer;box-shadow:0 8px 18px rgba(37,99,235,.2)}
+[data-theme="dark"] .customer-select-trigger,[data-theme="dark"] .customer-picker-card{background:#111a2b;color:#edf3ff;border-color:#26344b}[data-theme="dark"] .customer-picker-close,[data-theme="dark"] .customer-picker-search input,[data-theme="dark"] .customer-picker-cancel{background:#162237;color:#edf3ff;border-color:#26344b}[data-theme="dark"] .customer-option{border-color:#26344b}[data-theme="dark"] .customer-picker-footer{border-color:#26344b}
+@media(max-width:600px){.customer-picker{padding:10px}.customer-picker-card{max-height:92vh;border-radius:20px}.customer-picker-head{padding:16px}.customer-picker-search{margin:0 16px 12px}.customer-picker-list{padding:0 16px 6px}.customer-picker-footer{padding:11px 16px 15px}.customer-picker-count{display:none}}
+
+.login-use-default:hover{background:rgba(59,130,246,.14)}
+
+/* FINAL RESPONSIVE LAYOUT */
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+*{box-sizing:border-box}
+img,svg,canvas{max-width:100%;height:auto}
+button,input,select,textarea{max-width:100%}
+
+@media (max-width: 900px){
+  .main{margin-left:0!important;width:100%!important;padding:20px!important}
+  .sidebar{z-index:10001}
+  .page{width:100%;max-width:100%}
+  .cards,.stats-grid,.dashboard-grid,.form-grid,.admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media (max-width: 700px){
+  .main{padding:14px!important}
+  .cards,.stats-grid,.dashboard-grid,.form-grid,.admin-grid{grid-template-columns:1fr!important}
+  .topbar{gap:8px;flex-wrap:wrap}
+  .topbar h1{font-size:20px}
+  .page-header{flex-direction:column;align-items:flex-start;gap:10px}
+  .card{max-width:100%;overflow:hidden}
+  table{min-width:650px}
+  .table-wrap,.table-responsive{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .modal,.dialog,.admin-settings-card{width:calc(100vw - 28px)!important;max-width:520px!important}
+  .admin-settings-page,.finflow-admin-settings-page{padding:0!important}
+  .admin-settings-hero{padding:20px!important}
+  .admin-account-card{padding:16px!important}
+  .admin-field{width:100%}
+  .admin-input-wrap{width:100%}
+}
+
+@media (max-width: 480px){
+  .main{padding:10px!important}
+  .topbar{padding:10px!important}
+  .topbar h1{font-size:18px}
+  .btn,.button,button{min-height:42px}
+  .form-row,.form-grid{grid-template-columns:1fr!important}
+  .actions,.form-actions{flex-direction:column;align-items:stretch}
+  .actions button,.form-actions button{width:100%}
+  .admin-settings-hero{border-radius:16px!important;padding:16px!important}
+  .admin-account-card{border-radius:16px!important}
+  .finflow-message-card,.finflow-confirm-card{width:calc(100vw - 24px)!important}
+}
+
+</style>
+<style id="admin-sidebar-autohide-final">
+body.admin-settings-mode .sidebar{display:block !important;transform:translateX(-110%) !important;visibility:hidden !important;pointer-events:none !important;}
+body.admin-settings-mode .main{margin-left:0 !important;width:100% !important;}
+body.admin-settings-mode .menu-btn{display:inline-flex !important;}
+body.admin-settings-mode .sidebar.open{display:block !important;transform:translateX(0) !important;visibility:visible !important;pointer-events:auto !important;}
+@media(max-width:760px){body.admin-settings-mode .sidebar{display:block !important;transform:translateX(-110%) !important;visibility:hidden !important;pointer-events:none !important;}body.admin-settings-mode .sidebar.open{display:block !important;transform:translateX(0) !important;visibility:visible !important;pointer-events:auto !important;}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style id="finflow-animated-background">
+/* Background-only visual enhancement: original layout remains untouched. */
+html,body{min-height:100%;background:var(--bg)!important}
+body{position:relative;overflow-x:hidden}
+body::before,body::after{
+  content:"";position:fixed;inset:-22%;pointer-events:none;z-index:-2;
+  filter:blur(55px);opacity:.48;transform:translate3d(0,0,0);
+  will-change:transform;
+}
+body::before{
+  background:
+    radial-gradient(circle at 18% 24%,rgba(0,210,255,.34) 0 10%,transparent 28%),
+    radial-gradient(circle at 78% 20%,rgba(124,58,237,.30) 0 11%,transparent 29%),
+    radial-gradient(circle at 55% 78%,rgba(16,185,129,.24) 0 9%,transparent 26%),
+    radial-gradient(circle at 88% 82%,rgba(236,72,153,.24) 0 8%,transparent 25%);
+  animation:ff-bg-float 18s ease-in-out infinite alternate;
+}
+body::after{
+  background:
+    radial-gradient(circle at 65% 12%,rgba(59,130,246,.20) 0 8%,transparent 24%),
+    radial-gradient(circle at 28% 88%,rgba(245,158,11,.18) 0 8%,transparent 25%);
+  animation:ff-bg-float-2 24s ease-in-out infinite alternate;
+}
+@keyframes ff-bg-float{
+  0%{transform:translate3d(-3%,1%,0) scale(1)}
+  35%{transform:translate3d(4%,-3%,0) scale(1.05)}
+  70%{transform:translate3d(-2%,5%,0) scale(1.02)}
+  100%{transform:translate3d(5%,2%,0) scale(1.07)}
+}
+@keyframes ff-bg-float-2{
+  0%{transform:translate3d(4%,3%,0) rotate(0deg) scale(1)}
+  50%{transform:translate3d(-4%,-2%,0) rotate(8deg) scale(1.06)}
+  100%{transform:translate3d(2%,5%,0) rotate(-7deg) scale(1.03)}
+}
+/* Subtle moving light rays, behind all existing UI */
+#app::before{
+  content:"";position:fixed;inset:-35%;pointer-events:none;z-index:-1;
+  background:conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg,rgba(59,130,246,.045) 35deg,
+    transparent 72deg,rgba(168,85,247,.045) 125deg,
+    transparent 170deg,rgba(6,182,212,.04) 230deg,
+    transparent 285deg,rgba(236,72,153,.04) 325deg,transparent 360deg);
+  animation:ff-rays 30s linear infinite;
+}
+@keyframes ff-rays{to{transform:rotate(360deg)}}
+
+/* Only visual polish; no sizing/positioning/layout changes. */
+.card,.section,.kpi,.modal-card{
+  box-shadow:0 10px 30px rgba(15,23,42,.08);
+  transition:box-shadow .25s ease,transform .25s ease;
+}
+.card:hover,.kpi:hover{
+  box-shadow:0 16px 38px rgba(15,23,42,.13);
+  transform:translateY(-2px);
+}
+.btn{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.04);box-shadow:0 8px 20px rgba(15,23,42,.13)}
+.btn:active{transform:translateY(0) scale(.99)}
+input,select,textarea{transition:box-shadow .2s ease,border-color .2s ease}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(59,130,246,.12)!important}
+@media(prefers-reduced-motion:reduce){
+ body::before,body::after,#app::before{animation:none!important}
+}
+</style>
+
+
+<style id="finflow-toast-polish">
+.toast{
+  position:fixed;right:20px;bottom:20px;z-index:1000;
+  min-width:min(360px,calc(100vw - 30px));max-width:420px;
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px 15px;
+  color:#fff;
+  background:linear-gradient(135deg,rgba(15,23,42,.96),rgba(30,41,59,.93));
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:16px;
+  box-shadow:0 18px 50px rgba(2,6,23,.32),0 4px 14px rgba(2,6,23,.18);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  overflow:hidden;
+  opacity:0;visibility:hidden;
+  transform:translate3d(0,18px,0) scale(.96);
+  transition:opacity .28s ease,transform .28s cubic-bezier(.2,.8,.2,1),visibility .28s;
+}
+.toast.show{opacity:1;visibility:visible;transform:translate3d(0,0,0) scale(1)}
+.toast .toast-icon{
+  width:40px;height:40px;flex:0 0 40px;border-radius:13px;
+  display:grid;place-items:center;font-size:20px;font-weight:900;
+  background:rgba(255,255,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+}
+.toast .toast-content{min-width:0;flex:1}
+.toast .toast-title{font-size:13px;font-weight:850;letter-spacing:.01em;margin-bottom:2px}
+.toast .toast-message{font-size:12px;line-height:1.4;color:rgba(255,255,255,.78);word-break:break-word}
+.toast .toast-close{
+  border:0;background:transparent;color:rgba(255,255,255,.6);
+  font-size:20px;line-height:1;padding:2px;cursor:pointer;
+}
+.toast .toast-progress{
+  position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:rgba(255,255,255,.14);transform-origin:left;
+}
+.toast.success{border-color:rgba(34,197,94,.34)}
+.toast.success .toast-icon{background:rgba(34,197,94,.18);color:#86efac}
+.toast.success .toast-progress{background:#22c55e}
+.toast.error{border-color:rgba(239,68,68,.34)}
+.toast.error .toast-icon{background:rgba(239,68,68,.18);color:#fca5a5}
+.toast.error .toast-progress{background:#ef4444}
+.toast.warning{border-color:rgba(245,158,11,.34)}
+.toast.warning .toast-icon{background:rgba(245,158,11,.18);color:#fcd34d}
+.toast.warning .toast-progress{background:#f59e0b}
+.toast.info{border-color:rgba(59,130,246,.34)}
+.toast.info .toast-icon{background:rgba(59,130,246,.18);color:#93c5fd}
+.toast.info .toast-progress{background:#3b82f6}
+@keyframes ff-toast-progress{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+.toast .toast-progress.run{animation:ff-toast-progress 3.2s linear forwards}
+@media(max-width:520px){
+  .toast{right:15px;left:15px;bottom:15px;min-width:0;max-width:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .toast{transition:opacity .1s linear}
+  .toast .toast-progress.run{animation:none}
+}
+</style>
+
+<style id="admin-premium-dark-enhancement">
+/* FinFlow Pro — Premium Admin Security Center */
+[data-theme="dark"] .finflow-admin-settings-page{max-width:1180px}
+[data-theme="dark"] .admin-settings-hero{background:linear-gradient(135deg,#0b1830 0%,#111b3a 48%,#17133a 100%);border:1px solid rgba(96,165,250,.28);box-shadow:0 20px 70px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.05)}
+[data-theme="dark"] .admin-settings-hero:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 20%,rgba(59,130,246,.08) 48%,transparent 75%);animation:adminSweep 7s ease-in-out infinite;pointer-events:none}
+[data-theme="dark"] .admin-hero-icon{background:linear-gradient(135deg,#2563eb,#4f46e5 55%,#7c3aed);box-shadow:0 0 0 1px rgba(147,197,253,.18),0 16px 45px rgba(37,99,235,.38)}
+[data-theme="dark"] .admin-eyebrow{color:#60a5fa}
+[data-theme="dark"] .admin-settings-hero h2{color:#f8fbff;text-shadow:0 2px 20px rgba(96,165,250,.12)}
+[data-theme="dark"] .admin-settings-hero p{color:#9fb0c9}
+[data-theme="dark"] .admin-access-badge{color:#6ee7b7;background:rgba(16,185,129,.09);border-color:rgba(52,211,153,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+[data-theme="dark"] .admin-security-note,[data-theme="dark"] .admin-important{background:linear-gradient(135deg,rgba(30,64,175,.22),rgba(8,47,73,.16));border:1px solid rgba(96,165,250,.20);box-shadow:0 12px 35px rgba(0,0,0,.20)}
+[data-theme="dark"] .admin-security-note strong,[data-theme="dark"] .admin-important strong{color:#bfdbfe}
+[data-theme="dark"] .admin-security-note p,[data-theme="dark"] .admin-important p{color:#94a8c4}
+[data-theme="dark"] .admin-account-card{background:linear-gradient(145deg,rgba(17,27,48,.96),rgba(10,18,34,.96));border:1px solid rgba(148,163,184,.18);box-shadow:0 24px 70px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.045)}
+[data-theme="dark"] .account-card-head{border-bottom-color:rgba(148,163,184,.13)}
+[data-theme="dark"] .account-icon{background:linear-gradient(135deg,rgba(37,99,235,.24),rgba(124,58,237,.20));color:#93c5fd;box-shadow:0 0 0 1px rgba(96,165,250,.14)}
+[data-theme="dark"] .account-card-head h3{color:#f1f5f9}
+[data-theme="dark"] .account-card-head p,[data-theme="dark"] .admin-field small{color:#8799b2}
+[data-theme="dark"] .secure-pill{color:#a7f3d0;background:rgba(16,185,129,.08);border-color:rgba(52,211,153,.20)}
+[data-theme="dark"] .admin-field label{color:#dbeafe}
+[data-theme="dark"] .admin-input-wrap{background:rgba(2,6,23,.55);border-color:rgba(148,163,184,.20);box-shadow:inset 0 1px 2px rgba(0,0,0,.25)}
+[data-theme="dark"] .admin-input-wrap:focus-within{border-color:#60a5fa;box-shadow:0 0 0 4px rgba(59,130,246,.13),0 8px 25px rgba(0,0,0,.18)}
+[data-theme="dark"] .admin-input-wrap input{background:transparent;color:#f8fafc}
+[data-theme="dark"] .admin-input-wrap input::placeholder{color:#53657e}
+[data-theme="dark"] .field-icon{color:#60a5fa}
+[data-theme="dark"] .password-tips{background:linear-gradient(135deg,rgba(37,99,235,.11),rgba(124,58,237,.08));border-color:rgba(96,165,250,.18);color:#dbeafe}
+[data-theme="dark"] .password-tips li{color:#9fb0c9}
+[data-theme="dark"] .tips-icon{background:rgba(59,130,246,.16);color:#93c5fd}
+[data-theme="dark"] .admin-save-btn{background:linear-gradient(135deg,#2563eb,#4f46e5 55%,#7c3aed);box-shadow:0 14px 35px rgba(37,99,235,.25),inset 0 1px 0 rgba(255,255,255,.14)}
+[data-theme="dark"] .admin-save-btn:hover{box-shadow:0 18px 42px rgba(79,70,229,.36),inset 0 1px 0 rgba(255,255,255,.16)}
+[data-theme="dark"] .admin-lock-btn{color:#fca5a5;background:rgba(127,29,29,.12);border-color:rgba(248,113,113,.22)}
+[data-theme="dark"] .admin-lock-btn:hover{background:rgba(127,29,29,.22)}
+@keyframes adminSweep{0%,100%{transform:translateX(-12%);opacity:.35}50%{transform:translateX(12%);opacity:.8}}
+@media(prefers-reduced-motion:reduce){[data-theme="dark"] .admin-settings-hero:before{animation:none}}
+</style>
+<style id="admin-sidebar-slide-final">
+/* Admin Login: sidebar slides completely to the left instead of disappearing from layout. */
+body.admin-settings-mode .sidebar{
+  display:block !important;
+  transform:translateX(-110%) !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+body.admin-settings-mode .sidebar.open{
+  transform:translateX(0) !important;
+  visibility:visible !important;
+  pointer-events:auto !important;
+}
+</style><style>
+
+/* Professional styling for Delete All Data confirmation only */
+#deleteAllConfirmModal .modal-content,
+#deleteAllConfirmModal .confirm-modal,
+#deleteAllConfirmModal .modal-card {
+  border-radius: 20px !important;
+  border: 1px solid rgba(239,68,68,.22) !important;
+  box-shadow: 0 24px 70px rgba(0,0,0,.28), 0 8px 24px rgba(239,68,68,.10) !important;
+  overflow: hidden !important;
+}
+#deleteAllConfirmModal .modal-header,
+#deleteAllConfirmModal .confirm-header {
+  padding: 20px 22px !important;
+  background: linear-gradient(135deg, rgba(239,68,68,.12), rgba(220,38,38,.04)) !important;
+}
+#deleteAllConfirmModal .modal-title,
+#deleteAllConfirmModal .confirm-title {
+  font-weight: 800 !important;
+  letter-spacing: -.2px !important;
+}
+#deleteAllConfirmModal .modal-body,
+#deleteAllConfirmModal .confirm-body {
+  padding: 22px !important;
+}
+#deleteAllConfirmModal .warning,
+#deleteAllConfirmModal .danger-icon,
+#deleteAllConfirmModal .confirm-icon {
+  border-radius: 16px !important;
+}
+#deleteAllConfirmModal .modal-footer,
+#deleteAllConfirmModal .confirm-footer {
+  display:flex !important;
+  gap:12px !important;
+  justify-content:flex-end !important;
+  padding:16px 22px 20px !important;
+  background:rgba(127,127,127,.035) !important;
+}
+#deleteAllConfirmModal button {
+  min-height:44px !important;
+  border-radius:12px !important;
+  font-weight:700 !important;
+  transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease !important;
+}
+#deleteAllConfirmModal button:hover {
+  transform:translateY(-1px) !important;
+}
+#deleteAllConfirmModal .danger,
+#deleteAllConfirmModal .btn-danger,
+#deleteAllConfirmModal .confirm-danger {
+  box-shadow:0 8px 20px rgba(220,38,38,.20) !important;
+}
+@media(max-width:600px){
+  #deleteAllConfirmModal .modal-footer,
+  #deleteAllConfirmModal .confirm-footer {
+    flex-direction:column-reverse !important;
+  }
+  #deleteAllConfirmModal button {
+    width:100% !important;
+  }
+}
+
+</style>
+
+<style id="ff-delete-modal-style">
+.ff-delete-modal{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease}
+.ff-delete-modal.show{opacity:1;visibility:visible;pointer-events:auto}
+.ff-delete-backdrop{position:absolute;inset:0;background:rgba(2,6,23,.70);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ff-delete-card{position:relative;width:min(430px,100%);background:var(--panel,#fff);color:var(--text,#172033);border:1px solid rgba(239,68,68,.20);border-radius:24px;box-shadow:0 30px 90px rgba(0,0,0,.38);overflow:hidden;transform:translateY(18px) scale(.96);transition:transform .24s cubic-bezier(.2,.8,.2,1)}
+.ff-delete-modal.show .ff-delete-card{transform:translateY(0) scale(1)}
+.ff-delete-icon{width:62px;height:62px;margin:25px auto 4px;border-radius:19px;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#dc2626;background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.18)}
+.ff-delete-content{text-align:center;padding:0 28px 22px}
+.ff-delete-label{font-size:10px;font-weight:900;letter-spacing:1.5px;color:#dc2626;margin-top:12px}
+.ff-delete-content h3{margin:6px 0 9px;font-size:23px;font-weight:850}
+.ff-delete-content p{margin:0;color:var(--muted,#64748b);font-size:13px;line-height:1.6}
+.ff-delete-warning{display:flex;gap:10px;align-items:flex-start;text-align:left;margin-top:17px;padding:13px 14px;border-radius:14px;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.14);color:var(--text,#172033);font-size:12px;line-height:1.45}
+.ff-delete-warning>span{width:22px;height:22px;flex:0 0 22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#dc2626;color:#fff;font-weight:900}
+.ff-delete-warning small{color:var(--muted,#64748b)}
+.ff-delete-actions{display:flex;gap:11px;padding:16px 22px 21px;background:rgba(127,127,127,.045);border-top:1px solid rgba(148,163,184,.13)}
+.ff-delete-actions button{flex:1;min-height:45px;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;transition:.18s ease}
+.ff-delete-cancel{border:1px solid rgba(148,163,184,.28);background:var(--input-bg,#f8fafc);color:var(--text,#172033)}
+.ff-delete-confirm{border:0;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;box-shadow:0 8px 20px rgba(220,38,38,.22)}
+.ff-delete-actions button:hover{transform:translateY(-1px)}
+[data-theme="dark"] .ff-delete-card{background:#111a2b;color:#edf3ff;border-color:rgba(248,113,113,.20)}
+[data-theme="dark"] .ff-delete-warning{color:#edf3ff;background:rgba(239,68,68,.09)}
+@media(max-width:520px){.ff-delete-content{padding-left:20px;padding-right:20px}.ff-delete-actions{padding:14px 16px 17px;flex-direction:column-reverse}.ff-delete-actions button{width:100%}}
+</style>
+
+</head>
+<body>
+
+<div id="adminLoginOverlay" aria-modal="true" role="dialog">
+  <div class="admin-login-card">
+    <div class="admin-login-logo">🔐</div>
+    <h2>Admin Login</h2>
+    <p>Sign in to access FinFlow Pro</p>
+    <form id="adminLoginForm" autocomplete="off">
+      <div class="login-field"><label for="adminLoginEmail">Admin Email</label><input id="adminLoginEmail" type="email" placeholder="admin@example.com" autocomplete="off" required></div>
+      <div class="login-field"><label for="adminLoginPassword">Password</label><input id="adminLoginPassword" type="password" placeholder="Enter password" autocomplete="new-password" required></div>
+      <div id="adminLoginError" class="admin-login-error"></div>
+      
+      <div class="login-emergency-row">
+        
+      </div>
+<div class="login-recovery-row">
+        <button type="button" class="login-recovery-link" onclick="openAdminRecovery()">Forgot email or password?</button>
+      </div>
+
+      <button class="admin-login-btn" type="submit">Sign In</button>
+    </form>
+    <div class="login-security"><span>●</span><span>Protected Admin Access</span></div>
+  </div>
+</div>
+
+<div class="app">
+<aside class="sidebar" id="sidebar">
+ <div class="brand"><div class="logo">F</div><div><strong>FinFlow Pro</strong><small>Installment Manager</small></div></div>
+ <nav class="nav">
+  <button data-page="dashboard" class="active"><span class="ico">▦</span>Dashboard</button>
+  <button data-page="customers"><span class="ico">👥</span>Customers</button>
+  <button data-page="add-customer"><span class="ico">＋</span>Add Customer</button>
+  <button data-page="payments"><span class="ico">💳</span>Payments</button>
+  <button data-page="dues"><span class="ico">⏰</span>Due Installments</button>
+  <button data-page="products"><span class="ico">📦</span>Products</button>
+  <button data-page="reports"><span class="ico">📊</span>Reports</button>
+  <button data-page="backup"><span class="ico">☁</span>Backup & Restore</button>
+  <button data-page="cloud"><span class="ico">☁</span>Cloud Sync</button>
+  
+<button data-page="settings" id="settingsNavBtn"><span class="ico">⚙</span>Settings</button>
+<button data-page="admin-login" id="adminLoginNavBtn"><span class="ico">🔐</span>Admin Login</button>
+ </nav>
+ <div class="side-bottom"><div class="note">Your records are protected with local backup and cloud sync.</div></div>
+</aside>
+<div class="mobile-overlay" id="overlay"></div>
+<main class="main">
+ <header class="topbar">
+  <div style="display:flex;gap:10px;align-items:center"><button class="btn menu-btn" id="menuBtn">☰</button><div><h1 id="pageTitle">Dashboard</h1><p id="pageSubtitle">Business overview and collection performance</p></div></div>
+  <div class="actions"><button class="btn" id="themeBtn">☾ Theme</button><button class="btn primary" onclick="showPage('add-customer')">＋ New Customer</button></div>
+ </header>
+
+ <section class="page active" id="page-dashboard">
+  <div class="grid stats">
+   <div class="card stat"><div class="icon">👥</div><div class="label">TOTAL CUSTOMERS</div><div class="value" id="sCustomers">0</div></div>
+   <div class="card stat"><div class="icon">💰</div><div class="label">CONTRACT VALUE</div><div class="value" id="sSales">PKR 0</div></div>
+   <div class="card stat"><div class="icon">✓</div><div class="label">TOTAL COLLECTED</div><div class="value" id="sCollected">PKR 0</div></div>
+   <div class="card stat"><div class="icon">!</div><div class="label">OUTSTANDING</div><div class="value" id="sRemaining">PKR 0</div></div>
+  </div>
+  <div class="grid two" style="margin-top:16px">
+   <div class="card section"><div class="section-head"><h2>Recent Payments</h2><button class="btn" onclick="showPage('payments')">View all</button></div><div id="recentPayments"></div></div>
+   <div class="card section"><div class="section-head"><h2>Collection Summary</h2></div><div id="collectionSummary"></div></div>
+  </div>
+  <div class="grid two" style="margin-top:16px">
+   <div class="card section"><div class="section-head"><h2>Customers Requiring Attention</h2><button class="btn" onclick="showPage('dues')">View dues</button></div><div id="attention"></div></div>
+   <div class="card section"><div class="section-head"><h2>Quick Actions</h2></div><div class="grid three"><button class="btn" onclick="showPage('add-customer')">＋ Customer</button><button class="btn" onclick="openPaymentModal()">＋ Payment</button><button class="btn" onclick="printReport()">🖨 Print</button></div></div>
+  </div>
+ </section>
+
+ <section class="page" id="page-customers">
+  <div class="card section"><div class="section-head"><h2>Customer Directory</h2><div class="actions"><input class="search" id="customerSearch" placeholder="Search name, phone, CNIC..." oninput="renderCustomers()"><button class="btn primary" onclick="showPage('add-customer')">＋ Add Customer</button></div></div><div class="table-wrap"><table class="table"><thead><tr><th>Customer</th><th>Phone</th><th>Product</th><th>Contract</th><th>Collected</th><th>Remaining</th><th>Status</th><th>Actions</th></tr></thead><tbody id="customersBody"></tbody></table></div></div>
+ </section>
+
+ <section class="page" id="page-add-customer">
+  <div class="card section"><div class="section-head"><h2 id="customerFormTitle">Create Customer Contract</h2><span class="badge blue">Professional Record</span></div>
+   <form id="customerForm">
+    <input type="hidden" id="editId">
+    <div class="form-grid">
+     <div class="field"><label>Customer Name *</label><input id="fName" required></div>
+     <div class="field"><label>Father Name</label><input id="fFather"></div>
+     <div class="field"><label>Phone *</label><input id="fPhone" required inputmode="numeric" maxlength="12" placeholder="03XX-XXXXXXX" autocomplete="tel"><div class="format-hint">Format: 03XX-XXXXXXX</div></div>
+     <div class="field"><label>CNIC *</label><input id="fCnic" required inputmode="numeric" maxlength="15" placeholder="XXXXX-XXXXXXX-X" autocomplete="off"><div class="format-hint">Format: XXXXX-XXXXXXX-X</div></div>
+     <div class="field full"><label>Address</label><input id="fAddress"></div>
+     <div class="field"><label>Product / Service *</label><input id="fProduct" required placeholder="e.g. Laptop, Mobile, Furniture"></div>
+     <div class="field"><label>Cash Price (PKR) *</label><input id="fCash" type="number" min="0" step="0.01" required></div>
+     <div class="field"><label>Markup (%)</label><input id="fMarkup" type="number" min="0" step="0.01" value="0"></div>
+     <div class="field"><label>Number of Installments</label><input id="fInstallments" type="number" min="1" step="1" value="12"></div>
+     <div class="field"><label>Down Payment (PKR)</label><input id="fDown" type="number" min="0" step="0.01" value="0"></div>
+     <div class="field"><label>First Due Date</label><input id="fDue" type="date"></div>
+     <div class="field"><label>Payment Frequency</label><select id="fFrequency"><option value="monthly">Monthly</option><option value="weekly">Weekly</option><option value="biweekly">Every 2 Weeks</option></select></div>
+     <div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Optional notes about the contract"></textarea></div>
+    </div>
+    <div class="card section" style="margin-top:16px;background:var(--panel2)">
+      <div class="grid three">
+       <div class="kpi"><div class="muted">Sale Price</div><div class="big" id="previewSale">PKR 0</div></div>
+       <div class="kpi"><div class="muted">Installment Amount</div><div class="big" id="previewInstallment">PKR 0</div></div>
+       <div class="kpi"><div class="muted">After Down Payment</div><div class="big" id="previewBalance">PKR 0</div></div>
+      </div>
+    </div>
+    <div class="form-actions"><button type="button" class="btn" onclick="resetCustomerForm();showPage('customers')">Cancel</button><button class="btn primary" id="saveCustomerBtn">Save Customer</button></div>
+   </form>
+  </div>
+ </section>
+
+ <section class="page" id="page-payments">
+  <div class="card section"><div class="section-head"><h2>Payment Ledger</h2><button class="btn primary" onclick="openPaymentModal()">＋ Record Payment</button></div><div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Customer</th><th>Method</th><th>Reference</th><th>Amount</th><th>Note</th></tr></thead><tbody id="paymentsBody"></tbody></table></div></div>
+ </section>
+
+ <section class="page" id="page-dues">
+  <div class="grid stats">
+   <div class="card stat"><div class="label">OVERDUE</div><div class="value danger-text" id="dueOverdue">0</div></div>
+   <div class="card stat"><div class="label">DUE SOON</div><div class="value" id="dueSoon">0</div></div>
+   <div class="card stat"><div class="label">OUTSTANDING</div><div class="value" id="dueOutstanding">PKR 0</div></div>
+   <div class="card stat"><div class="label">COLLECTION RATE</div><div class="value" id="dueRate">0%</div></div>
+  </div>
+  <div class="card section" style="margin-top:16px"><div class="section-head"><h2>Installment Schedule</h2></div><div class="table-wrap"><table class="table"><thead><tr><th>Due Date</th><th>Customer</th><th>Product</th><th>Installment</th><th>Paid</th><th>Status</th><th>Action</th></tr></thead><tbody id="duesBody"></tbody></table></div></div>
+ </section>
+
+ <section class="page" id="page-products">
+  <div class="card section"><div class="section-head"><h2>Product / Contract Summary</h2></div><div class="table-wrap"><table class="table"><thead><tr><th>Product</th><th>Contracts</th><th>Contract Value</th><th>Collected</th><th>Outstanding</th></tr></thead><tbody id="productsBody"></tbody></table></div></div>
+ </section>
+
+ <section class="page" id="page-reports">
+  <div class="grid three">
+   <div class="card kpi"><div class="muted">Contract Value</div><div class="big" id="rSales">PKR 0</div></div>
+   <div class="card kpi"><div class="muted">Collected</div><div class="big success-text" id="rCollected">PKR 0</div></div>
+   <div class="card kpi"><div class="muted">Outstanding</div><div class="big danger-text" id="rRemaining">PKR 0</div></div>
+  </div>
+  <div class="grid two" style="margin-top:16px">
+   <div class="card section"><div class="section-head"><h2>Portfolio Collection</h2><button class="btn" onclick="printReport()">🖨 Print</button></div><div id="reportProgress"></div></div>
+   <div class="card section"><div class="section-head"><h2>Business Metrics</h2></div><div id="reportMetrics"></div></div>
+  </div>
+ </section>
+
+ <section class="page" id="page-backup">
+  <div class="grid two">
+   <div class="card section"><div class="section-head"><h2>Backup</h2></div><p class="muted">Download all customers and payment records as a JSON file.</p><button class="btn primary" onclick="exportData()">⬇ Export Backup</button></div>
+   <div class="card section"><div class="section-head"><h2>Restore</h2></div><p class="muted">Restore a FinFlow backup. Existing data will be replaced.</p><input type="file" id="importFile" accept=".json"><div style="margin-top:10px"><button class="btn danger" onclick="importData()">Restore Backup</button></div></div>
+  </div>
+  <div class="card section" style="margin-top:16px"><h2 style="margin-top:0">Data Protection</h2><div class="note">Because this is an offline single-file application, records are stored in this browser's local storage. Clearing browser data can remove records. Use Export Backup frequently.</div></div>
+ </section>
+
+
+ <section class="page" id="page-cloud">
+  <div class="grid two">
+   <div class="card section">
+    <div class="section-head"><h2>Cloud Database</h2><span class="badge blue" id="cloudStatus">Not Connected</span></div>
+    <p class="muted">Connect this app to a Supabase database. Your local records continue working even when you are offline.</p>
+    <div class="form-grid">
+     <div class="field full"><label>Supabase Project URL</label><input id="sbUrl" placeholder="https://your-project.supabase.co"></div>
+     <div class="field full"><label>Supabase Anon / Publishable Key</label><input id="sbKey" type="password" placeholder="eyJ..."></div>
+     <div class="field"><label>Account Email</label><input id="sbEmail" type="email" autocomplete="off"></div>
+     <div class="field"><label>Password</label><input id="sbPassword" type="password" autocomplete="new-password"></div>
+    </div>
+    <div class="form-actions"><button class="btn" onclick="cloudSaveConfig()">Save Config</button><button class="btn primary" onclick="cloudSignIn()">Sign In</button><button class="btn" onclick="cloudSignOut()">Sign Out</button></div>
+    <div class="note" style="margin-top:12px">Use a Supabase <b>anon/publishable</b> key only. Never put a service-role/secret key in this HTML file.</div>
+   </div>
+   <div class="card section">
+    <div class="section-head"><h2>Sync & Recovery</h2></div>
+    <div class="grid three">
+     <div class="kpi"><div class="muted">Local Customers</div><div class="big" id="cloudLocalCustomers">0</div></div>
+     <div class="kpi"><div class="muted">Local Payments</div><div class="big" id="cloudLocalPayments">0</div></div>
+     <div class="kpi"><div class="muted">Last Sync</div><div class="big" style="font-size:16px" id="cloudLastSync">Never</div></div>
+    </div>
+    <div class="form-actions">
+      <button class="btn primary" onclick="cloudUpload()">⬆ Upload Local → Cloud</button>
+      <button class="btn" onclick="cloudDownload()">⬇ Cloud → Local</button>
+    </div>
+    <div class="note" style="margin-top:12px">Sign in to your cloud account, then upload your local records. Use Cloud → Local to restore records on another device.</div>
+   </div>
+  </div>
+ </section>
+
+ <section class="page" id="page-settings">
+  <div class="card section"><div class="section-head"><h2>Application Settings</h2></div>
+   <div class="form-grid">
+    <div class="field"><label>Business Name</label><input id="businessName" placeholder="Your Business Name"></div>
+    <div class="field"><label>Currency</label><input id="currency" value="PKR"></div>
+   </div>
+   <div class="form-actions"><button class="btn primary" onclick="saveSettings()">Save Settings</button></div>
+  </div>
+  <div class="card section" style="margin-top:16px"><h2 style="margin-top:0">Danger Zone</h2><p class="muted">Delete all customers and payments from this browser.</p><button class="btn danger" onclick="clearAll()">Delete All Data</button></div>
+ </section>
+
+
+
+
+<!-- Dedicated Admin Login Settings Page -->
+
+<!-- Dedicated Admin Login Settings Page -->
+<section id="page-admin-login" class="page finflow-admin-settings-page">
+  <div class="admin-settings-hero">
+    <div class="admin-hero-icon">🔐</div>
+    <div class="admin-hero-copy">
+      <div class="admin-eyebrow">SECURITY CENTER</div>
+      <h2>Admin Login Settings</h2>
+      <p>Manage the email and password required to access FinFlow Pro.</p>
+    </div>
+    <div class="admin-access-badge"><span>●</span> Admin Only</div>
+  </div>
+
+  <div class="admin-security-note">
+    <div class="note-icon">✓</div>
+    <div>
+      <strong>Keep Your Account Secure</strong>
+      <p>Update your login details anytime. These credentials are required to access the app.</p>
+    </div>
+  </div>
+
+  <div class="admin-account-card">
+    <div class="account-card-head">
+      <div class="account-title-wrap">
+        <div class="account-icon">⚙</div>
+        <div>
+          <h3>Admin Account</h3>
+          <p>Update your admin login details and keep your account protected.</p>
+        </div>
+      </div>
+      <span class="secure-pill">🛡 Secure Access</span>
+    </div>
+
+    <div class="admin-form-grid">
+      <div class="admin-field full">
+        <label for="settingsAdminEmail">Admin Email</label>
+        <div class="admin-input-wrap">
+          <span class="field-icon">✉</span>
+          <input id="settingsAdminEmail" type="email" placeholder="admin@example.com" autocomplete="off">
+        </div>
+        <small>This email will be used to log in to FinFlow Pro.</small>
+      </div>
+
+      <div class="admin-field">
+        <label for="settingsAdminPassword">New Password</label>
+        <div class="admin-input-wrap">
+          <span class="field-icon">🔒</span>
+          <input id="settingsAdminPassword" type="password" placeholder="Enter a new password" autocomplete="new-password">
+          <button class="password-eye" type="button" onclick="toggleAdminPassword('settingsAdminPassword',this)" aria-label="Show password">◉</button>
+        </div>
+        <small>Use at least 6 characters.</small>
+      </div>
+
+      <div class="admin-field">
+        <label for="settingsAdminConfirmPassword">Confirm Password</label>
+        <div class="admin-input-wrap">
+          <span class="field-icon confirm">🔐</span>
+          <input id="settingsAdminConfirmPassword" type="password" placeholder="Confirm your new password" autocomplete="new-password">
+          <button class="password-eye" type="button" onclick="toggleAdminPassword('settingsAdminConfirmPassword',this)" aria-label="Show password">◉</button>
+        </div>
+        <small>Re-enter the password to confirm.</small>
+      </div>
+    </div>
+
+    <div class="password-tips">
+      <div class="tips-icon">🛡</div>
+      <div>
+        <strong>Password Tips</strong>
+        <ul>
+          <li>Use at least 6 characters</li>
+          <li>Include letters and numbers</li>
+          <li>Keep it secure and easy to remember</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="admin-action-grid">
+      <button class="admin-save-btn" type="button" onclick="saveAdminCredentials()">
+        <span>▣</span><b>Save Login Details</b>
+        <small>Update your email and password</small>
+      </button>
+      <button class="admin-lock-btn" type="button" onclick="adminLogout()">
+        <span>🔒</span><b>Lock App</b>
+        <small>Log out and require login again</small>
+      </button>
+    </div>
+
+    <div id="adminSettingsStatus" class="admin-settings-status"></div>
+  </div>
+
+  
+  <div class="admin-recovery-settings-card">
+    <div class="recovery-settings-head">
+      <div class="recovery-settings-icon">🗝</div>
+      <div>
+        <h3>Account Recovery</h3>
+        <p>Your recovery code lets you reset the admin login if the email or password is forgotten.</p>
+      </div>
+    </div>
+    <div class="recovery-code-box">
+      <div>
+        <span class="recovery-code-label">Your Recovery Code</span>
+        <strong id="adminRecoveryCodeDisplay">Loading…</strong>
+      </div>
+      <button type="button" onclick="copyAdminRecoveryCode()">Copy Code</button>
+    </div>
+    <div class="recovery-warning">⚠ Keep this code private. Anyone who has it can reset the local admin login.</div>
+  </div>
+
+<div class="admin-important">
+    <div class="important-icon">i</div>
+    <div>
+      <strong>Important</strong>
+      <p>After changing your login details, use the new credentials the next time you access the app.</p>
+    </div>
+  </div>
+</section>
+
+
+</main>
+</div>
+
+<div class="modal-backdrop" id="paymentModal">
+ <div class="modal">
+  <div class="modal-head"><h3>Record Payment</h3><button class="close" onclick="closePaymentModal()">×</button></div>
+  <div class="modal-body">
+   <form id="paymentForm">
+    <div class="form-grid">
+     <div class="field full"><label>Customer *</label><select id="pCustomer" required style="display:none"></select><button type="button" class="customer-select-trigger" id="customerSelectTrigger" onclick="openCustomerPicker()"><span class="customer-trigger-main"><span class="customer-trigger-avatar" id="customerTriggerAvatar">?</span><span class="customer-trigger-text"><span class="customer-trigger-name" id="customerTriggerName">Select customer</span><span class="customer-trigger-product" id="customerTriggerProduct">Choose a customer to record payment</span></span></span><span class="customer-chevron">⌄</span></button></div>
+     <div class="field"><label>Amount (PKR) *</label><input id="pAmount" type="number" min="0.01" step="0.01" required></div>
+     <div class="field"><label>Date *</label><input id="pDate" type="date" required></div>
+     <div class="field"><label>Payment Method</label><select id="pMethod"><option>Cash</option><option>Bank Transfer</option><option>JazzCash</option><option>EasyPaisa</option><option>Cheque</option><option>Other</option></select></div>
+     <div class="field"><label>Reference</label><input id="pRef" placeholder="Receipt / transaction no."></div>
+     <div class="field full"><label>Note</label><textarea id="pNote"></textarea></div>
+    </div>
+    <div class="form-actions"><button type="button" class="btn" onclick="closePaymentModal()">Cancel</button><button class="btn success">Save Payment</button></div>
+   </form>
+  </div>
+ </div>
+</div>
+
+<div id="customerPicker" class="customer-picker" aria-hidden="true">
+ <div class="customer-picker-card" role="dialog" aria-modal="true" aria-labelledby="customerPickerTitle">
+  <div class="customer-picker-head"><div class="customer-picker-icon">👥</div><div><div id="customerPickerTitle" class="customer-picker-title">Select Customer</div><div class="customer-picker-subtitle">Choose a customer to record payment</div></div><button type="button" class="customer-picker-close" onclick="closeCustomerPicker()">×</button></div>
+  <div class="customer-picker-search"><span>⌕</span><input id="customerPickerSearch" type="search" placeholder="Search customer by name or device..." oninput="renderCustomerPicker(this.value)"></div>
+  <div id="customerPickerList" class="customer-picker-list"></div>
+  <div class="customer-picker-footer"><div id="customerPickerCount" class="customer-picker-count">0 customers found</div><div style="display:flex;gap:8px"><button type="button" class="customer-picker-cancel" onclick="closeCustomerPicker()">Cancel</button><button type="button" class="customer-picker-choose" onclick="confirmCustomerPicker()">✓ Select Customer</button></div></div>
+ </div>
+</div>
+<div class="modal-backdrop" id="viewModal">
+ <div class="modal"><div class="modal-head"><h3 id="viewTitle">Customer Details</h3><button class="close" onclick="closeView()">×</button></div><div class="modal-body" id="viewBody"></div></div>
+</div>
+<div class="toast info" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const STORAGE = 'finflow_pro_v1';
+const SETTINGS = 'finflow_settings_v1';
+let customers = [];
+let payments = [];
+let settings = {businessName:'FinFlow Pro',currency:'PKR'};
+const todayISO = () => new Date().toISOString().slice(0,10);
+const money = n => `${settings.currency} ${Number(n||0).toLocaleString('en-PK',{maximumFractionDigits:2})}`;
+const uid = prefix => prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dateFmt = s => s ? new Date(s+'T00:00:00').toLocaleDateString('en-PK',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+
+function save(){
+ localStorage.setItem(STORAGE,JSON.stringify({customers,payments}));
+ localStorage.setItem(SETTINGS,JSON.stringify(settings));
+}
+function load(){
+ try{
+  const d=JSON.parse(localStorage.getItem(STORAGE)||'{}'); customers=Array.isArray(d.customers)?d.customers:[]; payments=Array.isArray(d.payments)?d.payments:[];
+  settings={...settings,...JSON.parse(localStorage.getItem(SETTINGS)||'{}')};
+ }catch(e){customers=[];payments=[]}
+}
+let toastTimer=null;
+function toast(msg,type){
+ const t=$('toast'); if(!t)return;
+ clearTimeout(toastTimer);
+ const text=String(msg||'');
+ let kind=type||'info', title='Information', icon='i';
+ if(type==='success'){title='Success';icon='✓'}
+ else if(type==='error'){title='Something went wrong';icon='×'}
+ else if(type==='warning'){title='Please check';icon='!'}
+ else if(/invalid|failed|error|cannot|not connected|enter a valid|sign in first|save cloud/i.test(text)){kind='error';title='Action needs attention';icon='×'}
+ else if(/deleted|replace|greater than|warning|choose|first/i.test(text)){kind='warning';title='Please check';icon='!'}
+ else if(/added|updated|saved|recorded|downloaded|restored|uploaded|signed in|signed out|copied/i.test(text)){kind='success';title='Completed successfully';icon='✓'}
+ t.className='toast '+kind;
+ t.innerHTML='<div class="toast-icon">'+icon+'</div><div class="toast-content"><div class="toast-title">'+title+'</div><div class="toast-message">'+esc(text)+'</div></div><button class="toast-close" aria-label="Close">×</button><div class="toast-progress"></div>';
+ t.querySelector('.toast-close').onclick=()=>t.classList.remove('show');
+ t.classList.add('show');
+ const bar=t.querySelector('.toast-progress');
+ requestAnimationFrame(()=>bar.classList.add('run'));
+ toastTimer=setTimeout(()=>t.classList.remove('show'),3200);
+}
+function totalContract(c){return Number(c.cash||0)*(1+Number(c.markup||0)/100)}
+function customerPaid(id){return payments.filter(p=>p.customerId===id).reduce((a,p)=>a+Number(p.amount||0),0)}
+function customerRemaining(c){return Math.max(0,totalContract(c)-customerPaid(c.id))}
+function installmentAmount(c){return Math.max(0,(totalContract(c)-Number(c.down||0))/Math.max(1,Number(c.installments||1)))}
+function contractCollected(c){return customerPaid(c.id)}
+function overall(){
+ const sales=customers.reduce((a,c)=>a+totalContract(c),0);
+ const collected=customers.reduce((a,c)=>a+customerPaid(c.id),0);
+ return {sales,collected,remaining:Math.max(0,sales-collected)}
+}
+function showPage(page){
+ const isAdmin=(page==='admin-login');
+ document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+ const el=$('page-'+page); if(el) el.classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+ document.body.classList.toggle('admin-settings-mode', isAdmin);
+ // HARD navigation state: Admin Settings owns the full screen and cannot inherit the sidebar layout.
+ const sb=$('sidebar'), ov=$('overlay'), main=document.querySelector('.main');
+ if(isAdmin){
+   sb?.classList.remove('open'); ov?.classList.remove('show');
+   if(sb){sb.style.setProperty('display','block','important');sb.style.setProperty('transform','translateX(-110%)','important');sb.style.setProperty('visibility','hidden','important');sb.style.setProperty('pointer-events','none','important');}
+   if(main){main.style.setProperty('margin-left','0','important');main.style.setProperty('width','100%','important');}
+ }else{
+   if(sb){sb.style.removeProperty('display');sb.style.removeProperty('transform');sb.style.removeProperty('visibility');sb.style.removeProperty('pointer-events');}
+   if(main){main.style.removeProperty('margin-left');main.style.removeProperty('width');}
+ }
+ const titles={
+  dashboard:['Dashboard','Business overview and collection performance'],
+  customers:['Customers','Customer records, contracts and balances'],
+  'add-customer':['Add Customer','Create or edit an installment contract'],
+  payments:['Payments','Complete payment and receipt ledger'],
+  dues:['Due Installments','Track upcoming and overdue collections'],
+  products:['Products','Portfolio performance by product'],
+  reports:['Reports','Business collection and portfolio insights'],
+  backup:['Backup & Restore','Protect and restore your local records'],
+  cloud:['Cloud Sync','Secure online database and recovery'],
+  settings:['Settings','Business preferences and data controls'],
+  'admin-login':['Admin Login Settings','Manage your admin account and login security']
+ };
+ $('pageTitle').textContent=titles[page]?.[0]||'FinFlow Pro';$('pageSubtitle').textContent=titles[page]?.[1]||'';
+ if(page==='dashboard')renderDashboard();
+ if(page==='customers')renderCustomers();
+ if(page==='payments')renderPayments();
+ if(page==='dues')renderDues();
+ if(page==='products')renderProducts();
+ if(page==='reports')renderReports();
+ if(page==='settings'){ $('businessName').value=settings.businessName; $('currency').value=settings.currency; } if(page==='admin-login'){ refreshRecoveryDisplay(); if(typeof loadAdminSettings==='function')loadAdminSettings(); }
+ if(page==='cloud'){ updateCloudCounters(); updateCloudStatus(); }
+ $('sidebar').classList.remove('open');$('overlay').classList.remove('show');
+}
+function renderDashboard(){
+ const o=overall();
+ $('sCustomers').textContent=customers.length;
+ $('sSales').textContent=money(o.sales);$('sCollected').textContent=money(o.collected);$('sRemaining').textContent=money(o.remaining);
+ const recent=[...payments].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
+ $('recentPayments').innerHTML=recent.length?`<div class="list">${recent.map(p=>{
+  const c=customers.find(x=>x.id===p.customerId);
+  return `<div class="list-item"><div><b>${esc(c?.name||'Unknown')}</b><div class="muted">${dateFmt(p.date)} · ${esc(p.method||'Cash')}</div></div><div class="amount success-text">${money(p.amount)}</div></div>`
+ }).join('')}</div>`:'<div class="empty">No payments recorded yet.</div>';
+ const rate=o.sales?Math.min(100,o.collected/o.sales*100):0;
+ $('collectionSummary').innerHTML=`<div class="kpi"><div class="muted">Collection Rate</div><div class="big">${rate.toFixed(1)}%</div><div class="progress"><span style="width:${rate}%"></span></div></div>
+ <div class="list"><div class="list-item"><span>Contract value</span><b>${money(o.sales)}</b></div><div class="list-item"><span>Collected</span><b class="success-text">${money(o.collected)}</b></div><div class="list-item"><span>Outstanding</span><b class="danger-text">${money(o.remaining)}</b></div></div>`;
+ const attention=customers.filter(c=>customerRemaining(c)>0).sort((a,b)=>customerRemaining(b)-customerRemaining(a)).slice(0,5);
+ $('attention').innerHTML=attention.length?`<div class="list">${attention.map(c=>`<div class="list-item"><div><b>${esc(c.name)}</b><div class="muted">${esc(c.product)} · ${dateFmt(c.due)}</div></div><div class="amount danger-text">${money(customerRemaining(c))}</div></div>`).join('')}</div>`:'<div class="empty">No outstanding balances.</div>';
+}
+function renderCustomers(){
+ const q=($('customerSearch')?.value||'').toLowerCase().trim();
+ const rows=customers.filter(c=>[c.name,c.phone,c.cnic,c.product].join(' ').toLowerCase().includes(q));
+ $('customersBody').innerHTML=rows.length?rows.map(c=>{
+  const contract=totalContract(c),paid=customerPaid(c.id),rem=customerRemaining(c);
+  const status=rem<=.01?'<span class="badge green">Paid</span>':(c.due && c.due<todayISO()?'<span class="badge red">Overdue</span>':'<span class="badge yellow">Active</span>');
+  return `<tr><td><b>${esc(c.name)}</b><div class="muted">${esc(c.father||'')}</div></td><td>${esc(c.phone)}</td><td>${esc(c.product)}</td><td>${money(contract)}</td><td>${money(paid)}</td><td>${money(rem)}</td><td>${status}</td><td><div class="actions"><button class="btn" onclick="viewCustomer('${c.id}')">View</button><button class="btn" onclick="editCustomer('${c.id}')">Edit</button><button class="btn success" onclick="openPaymentModal('${c.id}')">＋ Pay</button><button class="btn danger" onclick="deleteCustomer('${c.id}')">Delete</button></div></td></tr>`
+ }).join(''):'<tr><td colspan="8"><div class="empty">No customers found.</div></td></tr>';
+}
+function renderPayments(){
+ const rows=[...payments].sort((a,b)=>b.date.localeCompare(a.date));
+ $('paymentsBody').innerHTML=rows.length?rows.map(p=>{
+  const c=customers.find(x=>x.id===p.customerId);
+  return `<tr><td>${dateFmt(p.date)}</td><td><b>${esc(c?.name||'Deleted Customer')}</b></td><td>${esc(p.method||'Cash')}</td><td>${esc(p.ref||'—')}</td><td class="success-text"><b>${money(p.amount)}</b></td><td>${esc(p.note||'—')}</td></tr>`
+ }).join(''):'<tr><td colspan="6"><div class="empty">No payments recorded.</div></td></tr>';
+}
+function addDays(dateStr,days){const d=new Date(dateStr+'T00:00:00');d.setDate(d.getDate()+days);return d.toISOString().slice(0,10)}
+function scheduleFor(c){
+ const start=c.due||todayISO(), n=Math.max(1,Number(c.installments||1)), each=installmentAmount(c);
+ let step=c.frequency==='weekly'?7:c.frequency==='biweekly'?14:30;
+ return Array.from({length:n},(_,i)=>({date:addDays(start,i*step),amount:each,index:i+1}));
+}
+function renderDues(){
+ let all=[];customers.forEach(c=>{scheduleFor(c).forEach(s=>all.push({...s,c}));});
+ const today=todayISO();const soon=addDays(today,7);
+ let overdue=0,soonCount=0;
+ all.forEach(x=>{if(customerRemaining(x.c)<=.01)return;if(x.date<today)overdue++;else if(x.date<=soon)soonCount++});
+ const o=overall();$('dueOverdue').textContent=overdue;$('dueSoon').textContent=soonCount;$('dueOutstanding').textContent=money(o.remaining);$('dueRate').textContent=(o.sales?o.collected/o.sales*100:0).toFixed(1)+'%';
+ const rows=all.filter(x=>customerRemaining(x.c)>.01).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,100);
+ $('duesBody').innerHTML=rows.length?rows.map(x=>{
+  const paid=payments.filter(p=>p.customerId===x.c.id).reduce((a,p)=>a+Number(p.amount||0),0);
+  let status=x.date<today?'<span class="badge red">Overdue</span>':x.date<=soon?'<span class="badge yellow">Due Soon</span>':'<span class="badge blue">Upcoming</span>';
+  return `<tr><td>${dateFmt(x.date)}</td><td><b>${esc(x.c.name)}</b></td><td>${esc(x.c.product)}</td><td>${money(x.amount)}</td><td>${money(Math.min(paid,totalContract(x.c)))}</td><td>${status}</td><td><button class="btn success" onclick="openPaymentModal('${x.c.id}')">＋ Pay</button></td></tr>`
+ }).join(''):'<tr><td colspan="7"><div class="empty">No outstanding installments.</div></td></tr>';
+}
+function renderProducts(){
+ const map={};
+ customers.forEach(c=>{const k=(c.product||'Other').trim()||'Other';if(!map[k])map[k]={count:0,sales:0,collected:0};map[k].count++;map[k].sales+=totalContract(c);map[k].collected+=customerPaid(c.id)});
+ const rows=Object.entries(map).sort((a,b)=>b[1].sales-a[1].sales);
+ $('productsBody').innerHTML=rows.length?rows.map(([p,v])=>`<tr><td><b>${esc(p)}</b></td><td>${v.count}</td><td>${money(v.sales)}</td><td class="success-text">${money(v.collected)}</td><td class="danger-text">${money(v.sales-v.collected)}</td></tr>`).join(''):'<tr><td colspan="5"><div class="empty">No products yet.</div></td></tr>';
+}
+function renderReports(){
+ const o=overall(),rate=o.sales?o.collected/o.sales*100:0;
+ $('rSales').textContent=money(o.sales);$('rCollected').textContent=money(o.collected);$('rRemaining').textContent=money(o.remaining);
+ $('reportProgress').innerHTML=`<div class="kpi"><div class="muted">Portfolio collection rate</div><div class="big">${rate.toFixed(1)}%</div><div class="progress"><span style="width:${rate}%"></span></div></div>`;
+ const avg=customers.length?o.sales/customers.length:0;
+ const paidCount=customers.filter(c=>customerRemaining(c)<=.01).length;
+ $('reportMetrics').innerHTML=`<div class="list"><div class="list-item"><span>Total customers</span><b>${customers.length}</b></div><div class="list-item"><span>Fully paid contracts</span><b>${paidCount}</b></div><div class="list-item"><span>Active contracts</span><b>${customers.length-paidCount}</b></div><div class="list-item"><span>Average contract</span><b>${money(avg)}</b></div><div class="list-item"><span>Payments recorded</span><b>${payments.length}</b></div></div>`;
+}
+function resetCustomerForm(){
+ $('customerForm').reset();$('editId').value='';$('fMarkup').value=0;$('fInstallments').value=12;$('fDown').value=0;$('customerFormTitle').textContent='Create Customer Contract';$('saveCustomerBtn').textContent='Save Customer';updatePreview();
+}
+function editCustomer(id){
+ const c=customers.find(x=>x.id===id);if(!c)return;
+ $('editId').value=c.id;$('fName').value=c.name||'';$('fFather').value=c.father||'';$('fPhone').value=c.phone||'';$('fCnic').value=c.cnic||'';$('fAddress').value=c.address||'';$('fProduct').value=c.product||'';$('fCash').value=c.cash||0;$('fMarkup').value=c.markup||0;$('fInstallments').value=c.installments||12;$('fDown').value=c.down||0;$('fDue').value=c.due||'';$('fFrequency').value=c.frequency||'monthly';$('fNotes').value=c.notes||'';
+ $('customerFormTitle').textContent='Edit Customer Contract';$('saveCustomerBtn').textContent='Update Customer';showPage('add-customer');updatePreview();
+}
+function deleteCustomer(id){
+ const c=customers.find(x=>x.id===id);if(!c)return;
+ if(!confirm(`Delete ${c.name} and all of their payment records?`))return;
+ customers=customers.filter(x=>x.id!==id);payments=payments.filter(x=>x.customerId!==id);save();renderAll();toast('Customer deleted');
+}
+function viewCustomer(id){
+ const c=customers.find(x=>x.id===id);if(!c)return;
+ const hist=payments.filter(p=>p.customerId===id).sort((a,b)=>b.date.localeCompare(a.date));
+ const contract=totalContract(c),paid=customerPaid(id),rem=customerRemaining(c);
+ $('viewTitle').textContent=c.name;
+ $('viewBody').innerHTML=`<div class="grid three"><div class="kpi card"><div class="muted">Contract</div><div class="big">${money(contract)}</div></div><div class="kpi card"><div class="muted">Collected</div><div class="big success-text">${money(paid)}</div></div><div class="kpi card"><div class="muted">Remaining</div><div class="big danger-text">${money(rem)}</div></div></div>
+ <div class="note" style="margin:15px 0"><b>${esc(c.product)}</b> · ${esc(c.phone)} · ${esc(c.address||'No address')}<br>Installments: ${esc(c.installments)} × ${money(installmentAmount(c))} · First due: ${dateFmt(c.due)}</div>
+ <div class="section" style="padding:0"><h3>Payment History</h3>${hist.length?`<div class="list">${hist.map(p=>`<div class="list-item"><div>${dateFmt(p.date)} · ${esc(p.method)}</div><b class="success-text">${money(p.amount)}</b></div>`).join('')}</div>`:'<div class="empty">No payments yet.</div>'}</div>
+ <div class="form-actions"><button class="btn" onclick="closeView()">Close</button><button class="btn success" onclick="closeView();openPaymentModal('${id}')">＋ Record Payment</button><button class="btn primary" onclick="closeView();editCustomer('${id}')">Edit</button></div>`;
+ $('viewModal').classList.add('show');
+}
+function closeView(){$('viewModal').classList.remove('show')}
+
+function customerInitial(name){return (name||'?').trim().charAt(0).toUpperCase()||'?'}
+function customerColor(id){const colors=['#2563eb','#7c3aed','#10b981','#f97316','#db2777','#06b6d4'];let n=0;for(const ch of String(id||''))n=(n+ch.charCodeAt(0))%colors.length;return colors[n]}
+let customerPickerTemp='';
+function updateCustomerTrigger(){const id=$('pCustomer').value,c=customers.find(x=>x.id===id),a=$('customerTriggerAvatar'),n=$('customerTriggerName'),p=$('customerTriggerProduct');if(!c){a.textContent='?';n.textContent='Select customer';p.textContent='Choose a customer to record payment';return}a.textContent=customerInitial(c.name);a.style.background=customerColor(c.id);n.textContent=c.name;p.textContent=c.product||'Customer'}
+function openCustomerPicker(){if(!customers.length){toast('Add a customer first');return}customerPickerTemp=$('pCustomer').value||customers[0].id;const s=$('customerPickerSearch');if(s)s.value='';renderCustomerPicker('');const m=$('customerPicker');m.classList.add('show');m.setAttribute('aria-hidden','false');setTimeout(()=>s?.focus(),80)}
+function closeCustomerPicker(){const m=$('customerPicker');m.classList.remove('show');m.setAttribute('aria-hidden','true')}
+function renderCustomerPicker(query=''){const q=(query||'').trim().toLowerCase();const list=$('customerPickerList');const filtered=customers.filter(c=>`${c.name} ${c.product||''} ${c.phone||''}`.toLowerCase().includes(q));$('customerPickerCount').textContent=`${filtered.length} customer${filtered.length===1?'':'s'} found`;list.innerHTML=filtered.map(c=>{const selected=c.id===customerPickerTemp;return `<button type="button" class="customer-option ${selected?'selected':''}" onclick="pickCustomer('${c.id.replace(/'/g,"\\'")}')"><span class="customer-option-avatar" style="background:${customerColor(c.id)}">${esc(customerInitial(c.name))}</span><span class="customer-option-info"><span class="customer-option-name">${esc(c.name)}</span><span class="customer-option-product">${esc(c.product||'Customer')} · ${esc(c.phone||'No phone')}</span></span><span class="customer-radio"></span></button>`}).join('')||'<div class="empty" style="padding:25px;text-align:center">No customers found.</div>'}
+function pickCustomer(id){customerPickerTemp=id;renderCustomerPicker($('customerPickerSearch')?.value||'')}
+function confirmCustomerPicker(){if(!customerPickerTemp)return;const s=$('pCustomer');s.value=customerPickerTemp;updateCustomerTrigger();closeCustomerPicker()}
+
+function openPaymentModal(id){
+ if(!customers.length){toast('Add a customer first');return}
+ const select=$('pCustomer');select.innerHTML=customers.map(c=>`<option value="${c.id}">${esc(c.name)} — ${esc(c.product)}</option>`).join('');
+ if(id)select.value=id;
+ updateCustomerTrigger();
+ $('pDate').value=todayISO();$('pAmount').value='';$('pRef').value='';$('pNote').value='';$('paymentModal').classList.add('show');
+}
+function closePaymentModal(){$('paymentModal').classList.remove('show')}
+function updatePreview(){
+ const cash=Number($('fCash').value||0),markup=Number($('fMarkup').value||0),n=Math.max(1,Number($('fInstallments').value||1)),down=Number($('fDown').value||0);
+ const sale=cash*(1+markup/100),bal=Math.max(0,sale-down);
+ $('previewSale').textContent=money(sale);$('previewInstallment').textContent=money(bal/n);$('previewBalance').textContent=money(bal);
+}
+
+function formatPhoneInput(){
+ const el=$('fPhone');
+ let d=el.value.replace(/\D/g,'').slice(0,11);
+ if(d && !d.startsWith('03')) d='03'+d.replace(/^0+/, '').slice(0,9);
+ el.value=d.length>4?d.slice(0,4)+'-'+d.slice(4):d;
+}
+function formatCnicInput(){
+ const el=$('fCnic');
+ const d=el.value.replace(/\D/g,'').slice(0,13);
+ let out=d;
+ if(d.length>5) out=d.slice(0,5)+'-'+d.slice(5);
+ if(d.length>12) out=d.slice(0,5)+'-'+d.slice(5,12)+'-'+d.slice(12);
+ el.value=out;
+}
+$('fPhone').addEventListener('input',formatPhoneInput);
+$('fCnic').addEventListener('input',formatCnicInput);
+
+$('customerForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ formatPhoneInput(); formatCnicInput();
+ const phone=$('fPhone').value;
+ const cnic=$('fCnic').value;
+ if(!/^03\d{2}-\d{7}$/.test(phone)){toast('Invalid phone number. Use 03XX-XXXXXXX');$('fPhone').focus();return}
+ if(!/^\d{5}-\d{7}-\d$/.test(cnic)){toast('Invalid CNIC. Use XXXXX-XXXXXXX-X');$('fCnic').focus();return}
+ const id=$('editId').value||uid('c_');
+ const old=customers.find(c=>c.id===id);
+ const c={id,name:$('fName').value.trim(),father:$('fFather').value.trim(),phone:$('fPhone').value.trim(),cnic:$('fCnic').value.trim(),address:$('fAddress').value.trim(),product:$('fProduct').value.trim(),cash:Number($('fCash').value||0),markup:Number($('fMarkup').value||0),installments:Math.max(1,Number($('fInstallments').value||1)),down:Number($('fDown').value||0),due:$('fDue').value||todayISO(),frequency:$('fFrequency').value,notes:$('fNotes').value.trim(),createdAt:old?.createdAt||new Date().toISOString()};
+ if(c.down>totalContract(c)){toast('Down payment cannot exceed sale price');return}
+ if(old){customers=customers.map(x=>x.id===id?c:x);toast('Customer updated')}else{customers.push(c);toast('Customer added')}
+ save();resetCustomerForm();renderAll();showPage('customers');
+});
+$('paymentForm').addEventListener('submit',e=>{
+ e.preventDefault();const customerId=$('pCustomer').value,amount=Number($('pAmount').value||0),c=customers.find(x=>x.id===customerId);
+ if(!c||amount<=0){toast('Enter a valid payment');return}
+ if(amount>customerRemaining(c)+.01 && !confirm('This payment is greater than the remaining balance. Continue?'))return;
+ payments.push({id:uid('p_'),customerId,amount,date:$('pDate').value||todayISO(),method:$('pMethod').value,ref:$('pRef').value.trim(),note:$('pNote').value.trim()});
+ save();closePaymentModal();renderAll();toast('Payment recorded successfully');
+});
+['fCash','fMarkup','fInstallments','fDown'].forEach(id=>$(id).addEventListener('input',updatePreview));
+
+const CLOUD_CONFIG_KEY='finflow_cloud_config_v1';
+let sb=null;
+function cloudConfig(){try{return JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY)||'{}')}catch(e){return {}}}
+function cloudSaveConfig(){
+ let url=$('sbUrl').value.trim().replace(/\/$/,'');
+ const key=$('sbKey').value.trim();
+ let validUrl=false;
+ try{
+  const u=new URL(url);
+  validUrl=(u.protocol==='https:' && (u.hostname==='supabase.co' || u.hostname.endsWith('.supabase.co')));
+ }catch(e){validUrl=false}
+ if(!validUrl || !key){toast('Please paste the Supabase Project URL and Publishable/Anon Key exactly as provided');return}
+ localStorage.setItem(CLOUD_CONFIG_KEY,JSON.stringify({url,key,email:$('sbEmail').value.trim()}));
+ initCloud();toast('Cloud configuration saved');
+}
+function initCloud(){
+ const c=cloudConfig();
+ $('sbUrl').value=c.url||'';$('sbKey').value=c.key||'';$('sbEmail').value=c.email||'';
+ if(window.supabase && c.url && c.key){sb=window.supabase.createClient(c.url,c.key);updateCloudStatus()}
+ else {sb=null;setCloudStatus('Not Connected','red')}
+}
+async function updateCloudStatus(){
+ if(!sb){setCloudStatus('Not Connected','red');return}
+ try{
+  const {data:{session}}=await sb.auth.getSession();
+  setCloudStatus(session?'Signed In':'Configured',''+(session?'green':'blue'));
+ }catch(e){setCloudStatus('Connection Error','red')}
+}
+function setCloudStatus(text,kind){
+ const el=$('cloudStatus');el.textContent=text;el.className='badge '+(kind==='green'?'green':kind==='red'?'red':'blue');
+}
+async function cloudSignIn(){
+ if(!sb){toast('Save cloud configuration first');return}
+ const email=$('sbEmail').value.trim(),password=$('sbPassword').value;
+ if(!email||!password){toast('Enter email and password');return}
+ try{
+  const {error}=await sb.auth.signInWithPassword({email,password});
+  if(error)throw error;
+  localStorage.setItem(CLOUD_CONFIG_KEY,JSON.stringify({...cloudConfig(),email}));
+  await updateCloudStatus();toast('Signed in to cloud');
+ }catch(e){toast('Sign in failed: '+(e.message||'Check credentials'))}
+}
+async function cloudSignOut(){
+ if(!sb){toast('Cloud is not configured');return}
+ await sb.auth.signOut();await updateCloudStatus();toast('Signed out');
+}
+async function cloudUser(){
+ if(!sb)return null;
+ const {data:{user}}=await sb.auth.getUser();return user||null;
+}
+async function cloudUpload(){
+ if(!sb){toast('Save cloud configuration first');return}
+ const user=await cloudUser();if(!user){toast('Sign in first');return}
+ try{
+  const now=new Date().toISOString();
+  const cr=customers.map(c=>({id:c.id,owner_id:user.id,data:c,updated_at:now}));
+  const pr=payments.map(x=>({id:x.id,owner_id:user.id,data:x,updated_at:now}));
+  if(cr.length){const {error}=await sb.from('finflow_customers').upsert(cr,{onConflict:'id'});if(error)throw error}
+  if(pr.length){const {error}=await sb.from('finflow_payments').upsert(pr,{onConflict:'id'});if(error)throw error}
+  const {error:se}=await sb.from('finflow_settings').upsert({owner_id:user.id,data:settings,updated_at:now},{onConflict:'owner_id'});if(se)throw se;
+  localStorage.setItem('finflow_last_sync',now);updateCloudCounters();toast('Local records uploaded to cloud');
+ }catch(e){toast('Upload failed: '+(e.message||'Check database setup'))}
+}
+async function cloudDownload(){
+ if(!sb){toast('Save cloud configuration first');return}
+ const user=await cloudUser();if(!user){toast('Sign in first');return}
+ if(!(await professionalConfirm("Download cloud records and replace the current local records?","Cloud → Local"))) return;
+ try{
+  const c=await sb.from('finflow_customers').select('id,data').eq('owner_id',user.id);
+  if(c.error)throw c.error;
+  const pmt=await sb.from('finflow_payments').select('id,data').eq('owner_id',user.id);
+  if(pmt.error)throw pmt.error;
+  const st=await sb.from('finflow_settings').select('data').eq('owner_id',user.id).maybeSingle();
+  if(st.error)throw st.error;
+  customers=(c.data||[]).map(x=>x.data);payments=(pmt.data||[]).map(x=>x.data);if(st.data?.data)settings={...settings,...st.data.data};
+  save();renderAll();updateCloudCounters();localStorage.setItem('finflow_last_sync',new Date().toISOString());toast('Cloud records restored locally');
+ }catch(e){toast('Download failed: '+(e.message||'Check database setup'))}
+}
+function updateCloudCounters(){
+ $('cloudLocalCustomers').textContent=customers.length;$('cloudLocalPayments').textContent=payments.length;
+ const x=localStorage.getItem('finflow_last_sync');$('cloudLastSync').textContent=x?new Date(x).toLocaleString():'Never';
+}
+
+function renderAll(){renderDashboard();renderCustomers();renderPayments();renderDues();renderProducts();renderReports()}
+function exportData(){
+ const blob=new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),customers,payments,settings},null,2)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='finflow-backup-'+todayISO()+'.json';a.click();URL.revokeObjectURL(a.href);toast('Backup downloaded');
+}
+function importData(){
+ const f=$('importFile').files[0];if(!f){toast('Choose a backup file first');return}
+ const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.customers)||!Array.isArray(d.payments))throw Error('Invalid');if(!confirm('Restore backup and replace current data?'))return;customers=d.customers;payments=d.payments;settings={...settings,...(d.settings||{})};save();renderAll();toast('Backup restored');}catch(e){toast('Invalid backup file')}};r.readAsText(f);
+}
+function saveSettings(){settings.businessName=$('businessName').value.trim()||'FinFlow Pro';settings.currency=$('currency').value.trim()||'PKR';save();renderAll();toast('Settings saved')}
+function clearAll(){
+  const m=$('finflowDeleteAllModal');
+  if(!m)return;
+  m.classList.add('show');
+  m.setAttribute('aria-hidden','false');
+}
+function closeDeleteAllModal(){
+  const m=$('finflowDeleteAllModal');
+  if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true');}
+}
+function confirmDeleteAllData(){
+  closeDeleteAllModal();
+  customers=[];payments=[];save();renderAll();toast('All data deleted');
+}
+
+function printReport(){window.print()}
+$('themeBtn').addEventListener('click',()=>{const dark=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',dark?'light':'dark');localStorage.setItem('finflow_theme',dark?'light':'dark')});
+$('menuBtn').addEventListener('click',()=>{
+  const sb=$('sidebar'), ov=$('overlay');
+  // Menu button is also the escape hatch from Admin Settings full-screen mode.
+  if(document.body.classList.contains('admin-settings-mode')){
+    document.body.classList.remove('admin-settings-mode');
+    if(sb){
+      sb.style.removeProperty('display');
+      sb.style.removeProperty('transform');
+      sb.style.removeProperty('visibility');
+      sb.style.removeProperty('pointer-events');
+      sb.classList.add('open');
+    }
+    if(ov) ov.classList.add('show');
+    return;
+  }
+  sb.classList.add('open');
+  ov.classList.add('show');
+});
+$('overlay').addEventListener('click',()=>{$('sidebar').classList.remove('open');$('overlay').classList.remove('show')});
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',function(e){
+  const page=this.dataset.page;
+  if(page==='admin-login'){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    showPage('admin-login');
+    return false;
+  }
+  showPage(page);
+}));
+load();
+initCloud();
+const savedTheme=localStorage.getItem('finflow_theme')||'light';document.documentElement.setAttribute('data-theme',savedTheme);
+$('businessName').value=settings.businessName;$('currency').value=settings.currency;$('fDue').value=todayISO();
+renderAll();
+</script>
+
+<script>
+/* ===== FinFlow Pro Admin Login — Robust Credentials Manager ===== */
+(function(){
+  const ADMIN_KEY='finflow_admin_credentials_v2';
+  const OLD_KEY='finflow_admin_credentials_v1';
+  const LOGIN_KEY='finflow_admin_logged_in_v1';
+
+  function readCredentials(){
+    const keys=['finflow_admin_credentials_v2','finflow_admin_credentials_v1','finflow_admin_credentials'];
+    for(const key of keys){
+      try{
+        const raw=localStorage.getItem(key);
+        if(raw){
+          const x=JSON.parse(raw);
+          if(x && typeof x.email==='string' && typeof x.password==='string' && x.email.trim() && x.password){
+            const data={email:x.email.trim().toLowerCase(),password:String(x.password)};
+            try{
+              localStorage.setItem('finflow_admin_credentials_v2',JSON.stringify(data));
+              localStorage.setItem('finflow_admin_credentials_v1',JSON.stringify(data));
+            }catch(e){}
+            return data;
+          }
+        }
+      }catch(e){}
+    }
+    return {email:'admin@finflow.com',password:'admin123'};
+  }
+
+  function writeCredentials(email,password){
+    const data={email:String(email).trim().toLowerCase(),password:String(password)};
+    localStorage.setItem(ADMIN_KEY,JSON.stringify(data));
+    localStorage.setItem('finflow_admin_credentials_v2',JSON.stringify(data));
+    /* Keep old key synchronized for compatibility with earlier app versions. */
+    localStorage.setItem(OLD_KEY,JSON.stringify(data));
+
+    /* Verify immediately that the browser accepted the new values. */
+    const saved=JSON.parse(localStorage.getItem(ADMIN_KEY)||'null');
+    if(!saved || saved.email!==data.email || saved.password!==data.password){
+      throw new Error('Browser storage verification failed');
+    }
+    return true;
+  }
+
+  function isLoggedIn(){
+    return localStorage.getItem(LOGIN_KEY)==='1';
+  }
+
+  function showLogin(requireCredentials=true){
+    const o=document.getElementById('adminLoginOverlay');
+    if(o)o.style.display='flex';
+    document.body.classList.add('login-locked');
+    setTimeout(function(){
+      const e=document.getElementById('adminLoginEmail');
+      const p=document.getElementById('adminLoginPassword');
+      if(e)e.value='';
+      if(p)p.value='';
+      const err=document.getElementById('adminLoginError');
+      if(err)err.textContent='';
+    },0);
+  }
+
+  function hideLogin(){
+    const o=document.getElementById('adminLoginOverlay');
+    if(o)o.style.display='none';
+    document.body.classList.remove('login-locked');
+  }
+
+  
+  function getRecoveryCode(){
+    const key='finflow_admin_recovery_code_v2';
+    let code=(localStorage.getItem(key)||localStorage.getItem('finflow_admin_recovery_code_v1')||'').trim().toUpperCase();
+    if(!/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)){
+      const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let raw='';
+      for(let i=0;i<12;i++) raw+=chars[Math.floor(Math.random()*chars.length)];
+      code=raw.slice(0,4)+'-'+raw.slice(4,8)+'-'+raw.slice(8,12);
+    }
+    localStorage.setItem(key,code);
+    return code;
+  }
+
+  window.openAdminRecovery=function(){
+    const modal=document.getElementById('adminRecoveryModal');
+    if(!modal)return;
+    modal.style.display='flex';
+    const code=document.getElementById('adminRecoveryCode');
+    const err=document.getElementById('adminRecoveryError');
+    if(code)code.value='';
+    if(err)err.textContent='';
+    setTimeout(()=>document.getElementById('adminRecoveryCode')?.focus(),50);
+  };
+
+  window.closeAdminRecovery=function(){
+    const modal=document.getElementById('adminRecoveryModal');
+    if(modal)modal.style.display='none';
+  };
+
+  window.recoverAdminAccess=function(){
+    const code=(document.getElementById('adminRecoveryCode')?.value||'').replace(/[^A-Z0-9]/gi,'').toUpperCase();
+    const email=(document.getElementById('adminRecoveryEmail')?.value||'').trim().toLowerCase();
+    const password=document.getElementById('adminRecoveryPassword')?.value||'';
+    const confirm=document.getElementById('adminRecoveryConfirm')?.value||'';
+    const err=document.getElementById('adminRecoveryError');
+
+    if(code!==getRecoveryCode().replace(/[^A-Z0-9]/g,'')){
+      if(err)err.textContent='Invalid recovery code.';
+      return;
+    }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      if(err)err.textContent='Enter a valid new email.';
+      return;
+    }
+    if(password.length<6){
+      if(err)err.textContent='New password must be at least 6 characters.';
+      return;
+    }
+    if(password!==confirm){
+      if(err)err.textContent='Passwords do not match.';
+      return;
+    }
+
+    try{
+      const data={email:email,password:password};
+      localStorage.setItem('finflow_admin_credentials_v2',JSON.stringify(data));
+      localStorage.setItem('finflow_admin_credentials_v1',JSON.stringify(data));
+      localStorage.removeItem('finflow_admin_logged_in_v1');
+
+      if(typeof closeAdminRecovery==='function')closeAdminRecovery();
+      const loginEmail=document.getElementById('adminLoginEmail');
+      if(loginEmail)loginEmail.value='';
+      const loginPassword=document.getElementById('adminLoginPassword');
+      if(loginPassword)loginPassword.value='';
+      const loginError=document.getElementById('adminLoginError');
+      if(loginError)loginError.textContent='Recovery successful. Sign in with your new credentials.';
+      showLogin();
+      if(typeof toast==='function')toast('Admin login recovered successfully.','success');
+    }catch(e){
+      if(err)err.textContent='Could not save recovery details.';
+    }
+  };
+
+  
+window.copyAdminRecoveryCode=function(){
+    const code=getRecoveryCode();
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(code).then(()=>toast('Recovery code copied.','success')).catch(()=>toast('Copy failed.','error'));
+    }else{
+      const ta=document.createElement('textarea');ta.value=code;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');toast('Recovery code copied.','success')}catch(e){toast('Copy failed.','error')}
+      ta.remove();
+    }
+  };
+window.adminLogout=async function(){
+  try{ if(!sb) initCloud(); if(sb) await sb.auth.signOut(); }catch(e){}
+  localStorage.removeItem(LOGIN_KEY);
+  showLogin();
+};
+
+  window.toggleAdminPassword=function(id,btn){
+    const input=document.getElementById(id);
+    if(!input)return;
+    const showing=input.type==='text';
+    input.type=showing?'password':'text';
+    if(btn){
+      btn.textContent=showing?'◉':'◌';
+      btn.setAttribute('aria-label',showing?'Show password':'Hide password');
+    }
+  };
+
+  window.saveAdminCredentials=function(){
+    const emailEl=document.getElementById('settingsAdminEmail');
+    const passEl=document.getElementById('settingsAdminPassword');
+    const confirmEl=document.getElementById('settingsAdminConfirmPassword');
+    const status=document.getElementById('adminSettingsStatus');
+
+    const email=(emailEl?.value||'').trim().toLowerCase();
+    const password=passEl?.value||'';
+    const confirm=confirmEl?.value||'';
+
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      toast('Enter a valid admin email.','error'); return;
+    }
+    if(password.length<6){
+      toast('Enter a new password of at least 6 characters.','error'); return;
+    }
+    if(password!==confirm){
+      toast('Passwords do not match.','error'); return;
+    }
+
+    try{
+      writeCredentials(email,password);
+
+      if(passEl)passEl.value='';
+      if(confirmEl)confirmEl.value='';
+      if(status)status.textContent='✓ Login details saved. The app will require the new password after you lock it.';
+
+      toast('New admin password saved successfully.','success');
+
+      /* Force a fresh login so the user can immediately verify the new credentials. */
+      setTimeout(function(){
+        localStorage.removeItem(LOGIN_KEY);
+        showLogin();
+        const loginEmail=document.getElementById('adminLoginEmail');
+        if(loginEmail)loginEmail.value='';
+        const loginPassword=document.getElementById('adminLoginPassword');
+        if(loginPassword)loginPassword.value='';
+      },350);
+    }catch(err){
+      toast('Could not save login details in this browser.','error');
+    }
+  };
+
+  function refreshRecoveryDisplay(){
+    const el=document.getElementById('adminRecoveryCodeDisplay');
+    if(!el)return;
+    try{
+      el.textContent=getRecoveryCode();
+      el.dataset.loaded='1';
+    }catch(e){
+      el.textContent='Code unavailable';
+      console.error('Recovery code generation failed:',e);
+    }
+  }
+
+  window.copyAdminRecoveryCode=function(){
+    const code=getRecoveryCode();
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(code).then(()=>toast('Recovery code copied.','success')).catch(()=>fallbackCopy(code));
+    }else fallbackCopy(code);
+  };
+
+  function fallbackCopy(text){
+    const ta=document.createElement('textarea');
+    ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');toast('Recovery code copied.','success');}
+    catch(e){toast('Copy failed. Please copy the code manually.','error');}
+    ta.remove();
+  }
+  function loadSettings(){
+    const c=readCredentials();
+    const e=document.getElementById('settingsAdminEmail');
+    const p=document.getElementById('settingsAdminPassword');
+    const cp=document.getElementById('settingsAdminConfirmPassword');
+    if(e)e.value=c.email;
+    if(p)p.value='';
+    if(cp)cp.value='';
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    const form=document.getElementById('adminLoginForm');
+    // Initialize the existing Cloud Sync Supabase client from saved config.
+    try{ initCloud(); }catch(e){}
+
+    if(form){
+      form.addEventListener('submit',async function(ev){
+        ev.preventDefault();
+        const email=(document.getElementById('adminLoginEmail')?.value||'').trim();
+        const password=document.getElementById('adminLoginPassword')?.value||'';
+        const error=document.getElementById('adminLoginError');
+        if(!email || !password){ if(error)error.textContent='Email and password are required.'; return; }
+
+        try{
+          if(!sb){
+            try{initCloud();}catch(e){}
+          }
+          if(!sb){
+            if(error)error.textContent='First configure Supabase in Cloud Sync and click Save Config.';
+            return;
+          }
+          const {data,error:authError}=await sb.auth.signInWithPassword({email,password});
+          if(authError) throw authError;
+          if(!data?.session) throw new Error('Supabase did not return an active session.');
+          localStorage.setItem(LOGIN_KEY,'1');
+          if(error)error.textContent='';
+          document.getElementById('adminLoginEmail').value='';
+          document.getElementById('adminLoginPassword').value='';
+          hideLogin();
+          toast('Admin signed in successfully.','success');
+        }catch(err){
+          if(error)error.textContent='Incorrect email or password, or Supabase is not configured.';
+        }
+      });
+    }
+
+    try{loadSettings();refreshRecoveryDisplay();}catch(e){}
+
+    // Do NOT force localStorage to mean that the admin is authenticated.
+    // The Supabase session is the real authentication state.
+    try{
+      initCloud();
+      sb?.auth.getSession().then(({data})=>{
+        if(data?.session){ localStorage.setItem(LOGIN_KEY,'1'); hideLogin(); }
+        else { localStorage.removeItem(LOGIN_KEY); showLogin(); }
+      }).catch(()=>showLogin());
+    }catch(e){ showLogin(); }
+  });
+})();
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const page = document.getElementById('adminLoginSettingsPage');
+  if(page){
+    page.addEventListener('click', function(){
+      try{
+        const c = JSON.parse(localStorage.getItem('finflow_admin_credentials_v1') || 'null');
+        const e = document.getElementById('settingsAdminEmail');
+        if(c && e) e.value = c.email || '';
+      }catch(err){}
+    });
+  }
+});
+</script>
+
+
+<script>
+/* Admin Login page navigation */
+(function(){
+  window.openAdminLoginSettings=function(){
+    if(typeof showPage==='function') showPage('admin-login');
+  };
+})();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  const adminPage=document.getElementById('page-admin-login');
+  if(adminPage){
+    const sync=function(){
+      try{
+        const c=JSON.parse(localStorage.getItem('finflow_admin_credentials_v2')||localStorage.getItem('finflow_admin_credentials_v1')||'null');
+        const e=document.getElementById('settingsAdminEmail');
+        if(c&&e)e.value=c.email||'';
+      }catch(err){}
+    };
+    sync();
+    document.querySelectorAll('[data-page="admin-login"]').forEach(function(btn){
+      btn.addEventListener('click',sync);
+    });
+  }
+});
+</script>
+
+<div id="adminRecoveryModal" class="admin-recovery-modal" aria-modal="true" role="dialog" style="display:none;">
+  <div class="admin-recovery-card">
+    <button type="button" class="recovery-close" onclick="closeAdminRecovery()" aria-label="Close">×</button>
+    <div class="recovery-icon">🔑</div>
+    <div class="recovery-eyebrow">ACCOUNT RECOVERY</div>
+    <h3>Recover Admin Access</h3>
+    <p>Use your recovery code to reset the admin email and password.</p>
+
+    <div class="recovery-step">
+      <label for="adminRecoveryCode">Recovery Code</label>
+      <input id="adminRecoveryCode" type="text" placeholder="Enter recovery code" autocomplete="off">
+    </div>
+
+    <div class="recovery-step">
+      <label for="adminRecoveryEmail">New Admin Email</label>
+      <input id="adminRecoveryEmail" type="email" placeholder="admin@example.com" autocomplete="off">
+    </div>
+
+    <div class="recovery-step">
+      <label for="adminRecoveryPassword">New Password</label>
+      <input id="adminRecoveryPassword" type="password" placeholder="At least 6 characters" autocomplete="new-password">
+    </div>
+
+    <div class="recovery-step">
+      <label for="adminRecoveryConfirm">Confirm Password</label>
+      <input id="adminRecoveryConfirm" type="password" placeholder="Confirm new password" autocomplete="new-password">
+    </div>
+
+    <div id="adminRecoveryError" class="recovery-error"></div>
+
+    <button type="button" class="admin-recovery-submit" onclick="recoverAdminAccess()">🔓 Recover Admin Access</button>
+
+    <div class="recovery-help">Keep your recovery code somewhere safe. It is required if you forget your login.</div>
+  </div>
+</div>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+<script>
+// Final Admin Settings navigation guard. Runs in capture phase before other click handlers.
+document.addEventListener('click',function(e){
+  const btn=e.target.closest && e.target.closest('#adminLoginNavBtn,[data-page=\"admin-login\"]');
+  if(!btn) return;
+  e.preventDefault(); e.stopPropagation();
+  if(typeof showPage==='function') showPage('admin-login');
+},true);
+</script>
+
+
+<div id="finflowProfessionalMessage" class="finflow-message-modal" aria-hidden="true">
+  <div class="finflow-message-card" role="dialog" aria-modal="true" aria-labelledby="finflowMessageTitle">
+    <div class="finflow-message-head">
+      <div class="finflow-message-icon">☁️</div>
+      <div>
+        <div id="finflowMessageTitle" class="finflow-message-title">Cloud Local</div>
+        <div class="finflow-message-subtitle">FinFlow Pro Sync</div>
+      </div>
+    </div>
+    <div id="finflowMessageBody" class="finflow-message-body"></div>
+    <div class="finflow-message-actions">
+      <button type="button" class="finflow-message-btn" onclick="closeFinflowProfessionalMessage()">OK</button>
+    </div>
+  </div>
+</div>
+<script>
+function openFinflowProfessionalMessage(title, message, icon){
+  const m=document.getElementById('finflowProfessionalMessage');
+  const t=document.getElementById('finflowMessageTitle');
+  const b=document.getElementById('finflowMessageBody');
+  const i=m?.querySelector('.finflow-message-icon');
+  if(t)t.textContent=title||'Cloud Local';
+  if(b)b.textContent=message||'';
+  if(i)i.textContent=icon||'☁️';
+  if(m){m.classList.add('show');m.setAttribute('aria-hidden','false');}
+}
+function closeFinflowProfessionalMessage(){
+  const m=document.getElementById('finflowProfessionalMessage');
+  if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true');}
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') { closeFinflowProfessionalMessage(); closeCustomerPicker(); }
+});
+document.addEventListener('click',e=>{
+  const m=document.getElementById('finflowProfessionalMessage');
+  if(e.target===m) closeFinflowProfessionalMessage();
+});
+</script>
+
+
+<div id="finflowConfirmModal" class="finflow-confirm-modal" aria-hidden="true">
+  <div class="finflow-confirm-card" role="dialog" aria-modal="true" aria-labelledby="finflowConfirmTitle">
+    <div class="finflow-confirm-top">
+      <div class="finflow-confirm-icon">☁️</div>
+      <div>
+        <div id="finflowConfirmTitle" class="finflow-confirm-title">Cloud Local</div>
+        <div class="finflow-confirm-label">Confirm action</div>
+      </div>
+    </div>
+    <div id="finflowConfirmBody" class="finflow-confirm-body"></div>
+    <div class="finflow-confirm-actions">
+      <button type="button" class="finflow-confirm-btn" onclick="resolveFinflowConfirm(false)">Cancel</button>
+      <button type="button" class="finflow-confirm-btn primary" onclick="resolveFinflowConfirm(true)">Continue</button>
+    </div>
+  </div>
+</div>
+<script>
+let finflowConfirmResolver=null;
+function professionalConfirm(message,title='Cloud Local'){
+  return new Promise(resolve=>{
+    finflowConfirmResolver=resolve;
+    const m=document.getElementById('finflowConfirmModal');
+    const b=document.getElementById('finflowConfirmBody');
+    const t=document.getElementById('finflowConfirmTitle');
+    if(t)t.textContent=title;
+    if(b)b.textContent=message;
+    if(m){m.classList.add('show');m.setAttribute('aria-hidden','false');}
+  });
+}
+function resolveFinflowConfirm(answer){
+  const m=document.getElementById('finflowConfirmModal');
+  if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true');}
+  const r=finflowConfirmResolver; finflowConfirmResolver=null;
+  if(r)r(answer);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && finflowConfirmResolver) resolveFinflowConfirm(false);
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  try{ localStorage.removeItem('finflow_admin_logged_in_v1'); }catch(e){}
+  const e=document.getElementById('adminLoginEmail');
+  const p=document.getElementById('adminLoginPassword');
+  if(e)e.value='';
+  if(p)p.value='';
+});
+</script>
+
+<div id="finflowDeleteAllModal" class="ff-delete-modal" aria-hidden="true">
+  <div class="ff-delete-backdrop" data-delete-cancel></div>
+  <div class="ff-delete-card" role="dialog" aria-modal="true" aria-labelledby="ffDeleteTitle">
+    <div class="ff-delete-icon">⚠</div>
+    <div class="ff-delete-content">
+      <div class="ff-delete-label">DANGER ZONE</div>
+      <h3 id="ffDeleteTitle">Delete All Data?</h3>
+      <p>This will permanently remove <strong>all customers</strong> and <strong>all payment records</strong> from this app.</p>
+      <div class="ff-delete-warning">
+        <span>!</span>
+        <div><strong>This action cannot be undone</strong><br><small>Make sure you have a backup before continuing.</small></div>
+      </div>
+    </div>
+    <div class="ff-delete-actions">
+      <button type="button" class="ff-delete-cancel" data-delete-cancel>Cancel</button>
+      <button type="button" class="ff-delete-confirm" id="ffDeleteConfirm">Delete All Data</button>
+    </div>
+  </div>
+</div>
+
+
+<script id="ff-delete-modal-script">
+(function(){
+  document.addEventListener('click',function(e){
+    if(e.target.closest('[data-delete-cancel]')) closeDeleteAllModal();
+    if(e.target.closest('#ffDeleteConfirm')) confirmDeleteAllData();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') closeDeleteAllModal();
+  });
+})();
+</script>
+
+</body>
+</html>
